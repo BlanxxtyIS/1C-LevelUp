@@ -49,6 +49,7 @@ app.MapGet("/", () => "1C LevelUp API работает!");
 app.MapLessonEndpoints(); 
 app.MapAdminEndpoints();
 app.MapAuthEndpoints();
+app.MapCourseEndpoints();
 
 app.Run();
 

@@ -118,3 +118,24 @@ export async function getMe(token: string) {
   if (!res.ok) return null
   return res.json()
 }
+
+// Courses API
+export async function getCourses() {
+  const res = await fetch(`${BASE_URL}/courses`)
+  return res.json()
+}
+
+export async function getCourseChapters(courseId: number) {
+  const res = await fetch(`${BASE_URL}/courses/${courseId}/chapters`)
+  return res.json()
+}
+
+export async function getChapterTopics(chapterId: number) {
+  const res = await fetch(`${BASE_URL}/chapters/${chapterId}/topics`)
+  return res.json()
+}
+
+export async function getTopicLessons(topicId: number) {
+  const res = await fetch(`${BASE_URL}/topics/${topicId}/lessons`)
+  return res.json()
+}

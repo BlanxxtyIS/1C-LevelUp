@@ -25,6 +25,7 @@ interface UserProfile {
 interface Props {
   onAdmin: () => void
   onProfile: () => void
+  onHome: () => void
 }
 
 const statusConfig = {
@@ -160,7 +161,7 @@ function Connector({ fromIndex, status }: { fromIndex: number; status: LessonSta
   )
 }
 
-export default function LevelMap({ onAdmin, onProfile }: Props) {
+export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [user, setUser] = useState<UserProfile | null>(null)
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
@@ -210,9 +211,10 @@ export default function LevelMap({ onAdmin, onProfile }: Props) {
       <div className="px-6 pt-8 pb-4">
         <div className="flex items-center justify-between">
           <motion.h1
-            className="text-3xl font-bold text-white"
+            className="text-3xl font-bold text-white cursor-pointer"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
+            onClick={onHome}
           >
             1C <span className="text-violet-400">LevelUp</span>
           </motion.h1>
@@ -266,8 +268,8 @@ export default function LevelMap({ onAdmin, onProfile }: Props) {
               index={index}
               onClick={() => lesson.status === 'active' && setOpenLesson(lesson)}
             />
-            {index < lessons.length - 1 && 
-            <Connector fromIndex={index} status={lesson.status} />}
+            {index < lessons.length - 1 &&
+              <Connector fromIndex={index} status={lesson.status} />}
           </div>
         ))}
       </div>
