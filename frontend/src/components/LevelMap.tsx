@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Lock, Star, CheckCircle, Play, Loader2 } from 'lucide-react'
+import { Lock, Star, CheckCircle, Play, Loader2, User } from 'lucide-react'
 import LessonScreen from './LessonScreen'
-import { getLessons, getOrCreateTestUser, saveProgress, getUserProfile } from '../api'
+import { getLessons, saveProgress, getUserProfile } from '../api'
+import { useAuth } from '../context/AuthContext'
 
 type LessonStatus = 'completed' | 'active' | 'locked'
 
@@ -23,8 +24,8 @@ interface UserProfile {
 
 interface Props {
   onAdmin: () => void
+  onProfile: () => void
 }
-
 
 const statusConfig = {
   completed: {
@@ -124,33 +125,35 @@ function Connector({ fromIndex }: { fromIndex: number }) {
   )
 }
 
-export default function LevelMap({ onAdmin }: Props) {
+export default function LevelMap({ onAdmin, onProfile }: Props) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [user, setUser] = useState<UserProfile | null>(null)
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const { user: authUser, logout } = useAuth()
+
   useEffect(() => {
+    if (!authUser) return
     async function init() {
-      const u = await getOrCreateTestUser()
       const [lessonsData, profileData] = await Promise.all([
-        getLessons(u.id),
-        getUserProfile(u.id)
+        getLessons(authUser!.id),
+        getUserProfile(authUser!.id)
       ])
       setUser(profileData)
       setLessons(lessonsData)
       setLoading(false)
     }
     init()
-  }, [])
+  }, [authUser])
 
   async function handleComplete(xpEarned: number) {
-    if (!openLesson || !user) return
-    await saveProgress(user.id, openLesson.id, xpEarned)
+    if (!openLesson || !authUser) return
+    await saveProgress(authUser.id, openLesson.id, xpEarned)
 
     const [lessonsData, profileData] = await Promise.all([
-      getLessons(user.id),
-      getUserProfile(user.id)
+      getLessons(authUser.id),
+      getUserProfile(authUser.id)
     ])
     setLessons(lessonsData)
     setUser(profileData)
@@ -178,12 +181,28 @@ export default function LevelMap({ onAdmin }: Props) {
           >
             1C <span className="text-violet-400">LevelUp</span>
           </motion.h1>
-          <button
-            onClick={onAdmin}
-            className="text-xs text-slate-500 hover:text-violet-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-violet-800"
-          >
-            Admin
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onProfile}
+              className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
+              title={authUser?.username}
+            >
+              <User size={16} />
+            </button>
+            <button
+              onClick={onAdmin}
+              className="text-xs text-slate-500 hover:text-violet-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-violet-800"
+            >
+              Admin
+            </button>
+            <button
+              onClick={logout}
+              className="text-xs text-slate-500 hover:text-red-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-red-900"
+            >
+              Выйти
+            </button>
+          </div>
         </div>
 
         {user && (

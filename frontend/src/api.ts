@@ -91,3 +91,30 @@ export async function adminUpdateQuestion(id: number, data: {
 export async function adminDeleteQuestion(id: number) {
   await fetch(`${BASE_URL}/admin/questions/${id}`, { method: 'DELETE' })
 }
+
+// Auth API
+export async function register(username: string, email: string, password: string) {
+  const res = await fetch(`${BASE_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, email, password })
+  })
+  return res.json()
+}
+
+export async function login(email: string, password: string) {
+  const res = await fetch(`${BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+  return res.json()
+}
+
+export async function getMe(token: string) {
+  const res = await fetch(`${BASE_URL}/auth/me`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  if (!res.ok) return null
+  return res.json()
+}
