@@ -111,16 +111,51 @@ function LessonNode({ lesson, index, onClick }: { lesson: Lesson; index: number;
   )
 }
 
-function Connector({ fromIndex }: { fromIndex: number }) {
+function Connector({ fromIndex, status }: { fromIndex: number; status: LessonStatus }) {
   const isLeft = fromIndex % 2 === 0
+  const isCompleted = status === 'completed'
+
+  // Змейка идёт влево если узел слева, вправо если справа
+  const width = 80
+  const height = 80
+
+  // Точки кривой Безье — создают плавный изгиб
+  const path = isLeft
+    ? `M 32 0 C 32 40, 48 40, 48 80`
+    : `M 48 0 C 48 40, 32 40, 32 80`
+
   return (
-    <div className="flex" style={{ justifyContent: isLeft ? 'flex-start' : 'flex-end' }}>
-      <motion.div
-        className="w-0.5 h-10 bg-gradient-to-b from-slate-500 to-slate-700 ml-8 mr-8"
-        initial={{ scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={{ delay: fromIndex * 0.1 + 0.2 }}
-      />
+    <div className="flex justify-center" style={{ height }}>
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 80 80`}
+        fill="none"
+      >
+        {/* Фоновая линия (серая) */}
+        <motion.path
+          d={path}
+          stroke="#334155"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="6 6"
+          fill="none"
+        />
+
+        {/* Линия прогресса (цветная) поверх */}
+        {isCompleted && (
+          <motion.path
+            d={path}
+            stroke="#10b981"
+            strokeWidth="4"
+            strokeLinecap="round"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.6, delay: fromIndex * 0.1 }}
+          />
+        )}
+      </svg>
     </div>
   )
 }
@@ -231,7 +266,8 @@ export default function LevelMap({ onAdmin, onProfile }: Props) {
               index={index}
               onClick={() => lesson.status === 'active' && setOpenLesson(lesson)}
             />
-            {index < lessons.length - 1 && <Connector fromIndex={index} />}
+            {index < lessons.length - 1 && 
+            <Connector fromIndex={index} status={lesson.status} />}
           </div>
         ))}
       </div>

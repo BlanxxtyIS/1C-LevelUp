@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+/* * {
+  background-image: none;
+} */
+
+body {
+  background: #0f0f1a;
+}
