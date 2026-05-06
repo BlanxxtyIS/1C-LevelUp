@@ -1,0 +1,233 @@
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, Heart, Zap, Loader2 } from 'lucide-react'
+import { getLessonQuestions } from '../api'
+
+interface Question {
+  id: number
+  text: string
+  options: string[]
+  correctIndex: number
+  explanation: string
+}
+
+interface Props {
+  lessonId: number
+  onClose: () => void
+  onComplete: (xp: number) => void
+}
+
+export default function LessonScreen({ lessonId, onClose, onComplete }: Props) {
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [loading, setLoading] = useState(true)
+  const [current, setCurrent] = useState(0)
+  const [selected, setSelected] = useState<number | null>(null)
+  const [answerState, setAnswerState] = useState<'idle' | 'correct' | 'wrong'>('idle')
+  const [lives, setLives] = useState(3)
+  const [xpEarned, setXpEarned] = useState(0)
+  const [finished, setFinished] = useState(false)
+
+  useEffect(() => {
+    getLessonQuestions(lessonId).then(data => {
+      setQuestions(data)
+      setLoading(false)
+    })
+  }, [lessonId])
+
+  if (loading) {
+    return (
+      <motion.div
+        className="fixed inset-0 flex items-center justify-center"
+        style={{ background: '#0f0f1a' }}
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+      >
+        <Loader2 className="text-violet-400 animate-spin" size={40} />
+      </motion.div>
+    )
+  }
+
+  const question = questions[current]
+  const progress = (current / questions.length) * 100
+
+  function handleAnswer(index: number) {
+    if (answerState !== 'idle') return
+    setSelected(index)
+    if (index === question.correctIndex) {
+      setAnswerState('correct')
+      setXpEarned(p => p + 10)
+    } else {
+      setAnswerState('wrong')
+      setLives(p => p - 1)
+    }
+  }
+
+  function handleNext() {
+    if (current + 1 >= questions.length) {
+      setFinished(true)
+    } else {
+      setCurrent(p => p + 1)
+      setSelected(null)
+      setAnswerState('idle')
+    }
+  }
+
+  if (finished) {
+    return (
+      <motion.div
+        className="fixed inset-0 flex flex-col items-center justify-center"
+        style={{ background: '#0f0f1a' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', bounce: 0.5 }}
+          className="text-center"
+        >
+          <div className="text-7xl mb-6">🎉</div>
+          <h2 className="text-3xl font-bold text-white mb-2">Урок пройден!</h2>
+          <p className="text-slate-400 mb-8">Отличная работа!</p>
+
+          <div className="flex gap-6 justify-center mb-10">
+            <div className="bg-slate-800 rounded-2xl px-6 py-4 text-center">
+              <p className="text-3xl font-bold text-violet-400">{xpEarned}</p>
+              <p className="text-xs text-slate-400 mt-1">XP получено</p>
+            </div>
+            <div className="bg-slate-800 rounded-2xl px-6 py-4 text-center">
+              <p className="text-3xl font-bold text-emerald-400">{lives}</p>
+              <p className="text-xs text-slate-400 mt-1">Жизней осталось</p>
+            </div>
+          </div>
+
+          <motion.button
+            className="bg-violet-600 hover:bg-violet-500 text-white font-bold py-4 px-12 rounded-2xl text-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onComplete(xpEarned)}
+          >
+            Продолжить →
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    )
+  }
+
+  return (
+    <motion.div
+      className="fixed inset-0 flex flex-col"
+      style={{ background: '#0f0f1a' }}
+      initial={{ x: '100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '100%' }}
+      transition={{ type: 'spring', damping: 25 }}
+    >
+      {/* Top bar */}
+      <div className="flex items-center gap-4 px-6 pt-8 pb-4">
+        <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+          <X size={24} />
+        </button>
+        <div className="flex-1 h-3 bg-slate-800 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-violet-500 rounded-full"
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.4 }}
+          />
+        </div>
+        <div className="flex gap-1">
+          {[...Array(3)].map((_, i) => (
+            <Heart
+              key={i}
+              size={20}
+              className={i < lives ? 'text-red-500 fill-red-500' : 'text-slate-700'}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Question */}
+      <div className="flex-1 px-6 pt-8">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={question.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="text-xs text-violet-400 font-semibold uppercase tracking-wider mb-3">
+              Вопрос {current + 1} из {questions.length}
+            </p>
+            <h2 className="text-xl font-bold text-white mb-8 leading-snug">
+              {question.text}
+            </h2>
+
+            <div className="flex flex-col gap-3">
+              {question.options.map((option, index) => {
+                let style = 'border-slate-700 bg-slate-800/50 text-white'
+                if (selected === index) {
+                  if (answerState === 'correct') style = 'border-emerald-500 bg-emerald-500/20 text-emerald-300'
+                  if (answerState === 'wrong') style = 'border-red-500 bg-red-500/20 text-red-300'
+                } else if (answerState !== 'idle' && index === question.correctIndex) {
+                  style = 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
+                }
+
+                return (
+                  <motion.button
+                    key={index}
+                    className={`w-full text-left px-5 py-4 rounded-2xl border-2 font-medium transition-colors ${style}`}
+                    whileHover={answerState === 'idle' ? { scale: 1.02 } : {}}
+                    whileTap={answerState === 'idle' ? { scale: 0.98 } : {}}
+                    onClick={() => handleAnswer(index)}
+                  >
+                    {option}
+                  </motion.button>
+                )
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom feedback */}
+      <AnimatePresence>
+        {answerState !== 'idle' && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className={`px-6 py-6 ${answerState === 'correct'
+              ? 'bg-emerald-500/10 border-t border-emerald-500/30'
+              : 'bg-red-500/10 border-t border-red-500/30'}`}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className={`font-bold text-lg mb-1 ${answerState === 'correct' ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {answerState === 'correct' ? '✓ Правильно!' : '✗ Неверно'}
+                </p>
+                <p className="text-slate-300 text-sm">{question.explanation}</p>
+                {answerState === 'correct' && (
+                  <div className="flex items-center gap-1 mt-2">
+                    <Zap size={14} className="text-yellow-400" />
+                    <span className="text-yellow-400 text-sm font-semibold">+10 XP</span>
+                  </div>
+                )}
+              </div>
+              <motion.button
+                className={`shrink-0 font-bold py-3 px-6 rounded-xl text-white ${answerState === 'correct'
+                  ? 'bg-emerald-500 hover:bg-emerald-400'
+                  : 'bg-red-500 hover:bg-red-400'}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleNext}
+              >
+                Далее
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
