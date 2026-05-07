@@ -42,8 +42,8 @@ export default function ChaptersPage({ course, onBack, onChapter }: Props) {
   )
 
   return (
-    <div className="min-h-screen px-4 py-8" style={{ background: '#0f0f1a' }}>
-      <div className="max-w-lg mx-auto">
+    <div className="px-6 pt-8 pb-4" style={{ background: '#0f0f1a' }}>
+      <div className="max-w-2xl mx-auto">
 
         {/* Header */}
         <div className="flex items-center gap-3 mb-2">

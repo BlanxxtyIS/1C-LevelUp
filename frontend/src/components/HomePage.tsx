@@ -3,32 +3,44 @@ import { Map, BookOpen, User, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 interface Props {
+  onHome: () => void
   onLevelMap: () => void
   onCourses: () => void
   onProfile: () => void
   onAdmin: () => void
 }
 
-export default function HomePage({ onLevelMap, onCourses, onProfile, onAdmin }: Props) {
+export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onAdmin }: Props) {
   const { user, logout } = useAuth()
 
   return (
     <div className="min-h-screen px-6 py-8" style={{ background: '#0f0f1a' }}>
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-2 py-2">
+          <motion.h1
+            className="text-3xl font-bold text-white cursor-pointer"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={onHome}
+          >
+            1C <span className="text-violet-400">LevelUp</span>
+          </motion.h1>
+        </div>
 
         {/* Header */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onProfile}
-            className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
-          >
-            <User size={16} />
-          </button>
+        <div className="flex items-center justify-end gap-2 py-2">
           <button
             onClick={onAdmin}
             className="text-xs text-slate-500 hover:text-violet-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-violet-800"
           >
             Admin
+          </button>
+
+          <button
+            onClick={onProfile}
+            className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
+          >
+            <User size={16} />
           </button>
           <button
             onClick={logout}

@@ -50,6 +50,10 @@ export default function LessonScreen({ lessonId, onClose, onComplete }: Props) {
   const question = questions[current]
   const progress = (current / questions.length) * 100
 
+  if (!question) {
+    return null
+  }
+  
   function handleAnswer(index: number) {
     if (answerState !== 'idle') return
     setSelected(index)

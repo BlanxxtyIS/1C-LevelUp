@@ -207,8 +207,8 @@ export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0f0f1a' }}>
-      <div className="px-6 pt-8 pb-4">
+    <div className="px-6 pt-8 pb-4" style={{ background: '#0f0f1a' }}>
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between">
           <motion.h1
             className="text-3xl font-bold text-white cursor-pointer"

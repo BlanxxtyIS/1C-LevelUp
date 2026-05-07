@@ -36,7 +36,7 @@ export default function ProfileScreen({ onBack }: Props) {
 
     return (
         <div className="min-h-screen px-6 py-8" style={{ background: '#0f0f1a' }}>
-            <div className="max-w-sm mx-auto">
+            <div className="max-w-2xl mx-auto">
 
                 <div className="flex items-center gap-3 mb-10">
                     <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors">

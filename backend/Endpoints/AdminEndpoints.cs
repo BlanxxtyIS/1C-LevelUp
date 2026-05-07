@@ -347,16 +347,16 @@ public static class AdminEndpoints
             return Results.Ok(lesson);
         });
 
-        admin.MapDelete("/lessons/{id}", async (int id, AppDbContext db) =>
-        {
-            var lesson = await db.Lessons.FindAsync(id);
-            if (lesson == null) return Results.NotFound();
-            var questions = db.Questions.Where(q => q.LessonId == id);
-            db.Questions.RemoveRange(questions);
-            db.Lessons.Remove(lesson);
-            await db.SaveChangesAsync();
-            return Results.Ok();
-        });
+        // admin.MapDelete("/lessons/{id}", async (int id, AppDbContext db) =>
+        // {
+        //     var lesson = await db.Lessons.FindAsync(id);
+        //     if (lesson == null) return Results.NotFound();
+        //     var questions = db.Questions.Where(q => q.LessonId == id);
+        //     db.Questions.RemoveRange(questions);
+        //     db.Lessons.Remove(lesson);
+        //     await db.SaveChangesAsync();
+        //     return Results.Ok();
+        // });
     }
 }
 
