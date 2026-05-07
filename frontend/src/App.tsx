@@ -8,8 +8,9 @@ import ProfileScreen from './components/ProfileScreen'
 import CoursesPage from './components/courses/CoursesPage'
 import ChaptersPage from './components/courses/ChaptersPage'
 import TopicsPage from './components/courses/TopicsPage'
+import TopicScreen from './components/courses/TopicScreen'
 
-type Page = 'home' | 'map' | 'admin' | 'profile' | 'courses' | 'chapters' | 'topics'
+type Page = 'home' | 'map' | 'admin' | 'profile' | 'courses' | 'chapters' | 'topics' | 'topic-screen'
 
 interface Course { id: number; title: string; emoji: string; color: string; description: string; chapterCount: number }
 interface Chapter { id: number; title: string; description: string; order: number; topicCount: number }
@@ -49,7 +50,15 @@ function App() {
       course={selectedCourse}
       chapter={selectedChapter}
       onBack={() => setPage('chapters')}
-      onTopic={topic => { setSelectedTopic(topic); }}
+      onTopic={topic => { setSelectedTopic(topic); setPage('topic-screen') }}
+    />
+  )
+
+  if (page === 'topic-screen' && selectedCourse && selectedTopic) return (
+    <TopicScreen
+      topic={selectedTopic}
+      course={selectedCourse}
+      onBack={() => setPage('topics')}
     />
   )
 
@@ -58,6 +67,7 @@ function App() {
       onLevelMap={() => setPage('map')}
       onCourses={() => setPage('courses')}
       onProfile={() => setPage('profile')}
+      onAdmin={() => setPage('admin')}
     />
   )
 }

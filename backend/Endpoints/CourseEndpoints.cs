@@ -12,8 +12,14 @@ public static class CourseEndpoints
         {
             var courses = await db.Courses
                 .OrderBy(c => c.Order)
-                .Select(c => new {
-                    c.Id, c.Title, c.Description, c.Emoji, c.Color, c.Order,
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Title,
+                    c.Description,
+                    c.Emoji,
+                    c.Color,
+                    c.Order,
                     ChapterCount = db.Chapters.Count(ch => ch.CourseId == c.Id)
                 })
                 .ToListAsync();
@@ -26,8 +32,13 @@ public static class CourseEndpoints
             var chapters = await db.Chapters
                 .Where(ch => ch.CourseId == courseId)
                 .OrderBy(ch => ch.Order)
-                .Select(ch => new {
-                    ch.Id, ch.CourseId, ch.Title, ch.Description, ch.Order,
+                .Select(ch => new
+                {
+                    ch.Id,
+                    ch.CourseId,
+                    ch.Title,
+                    ch.Description,
+                    ch.Order,
                     TopicCount = db.Topics.Count(t => t.ChapterId == ch.Id)
                 })
                 .ToListAsync();
@@ -40,8 +51,13 @@ public static class CourseEndpoints
             var topics = await db.Topics
                 .Where(t => t.ChapterId == chapterId)
                 .OrderBy(t => t.Order)
-                .Select(t => new {
-                    t.Id, t.ChapterId, t.Title, t.Description, t.Order,
+                .Select(t => new
+                {
+                    t.Id,
+                    t.ChapterId,
+                    t.Title,
+                    t.Description,
+                    t.Order,
                     LessonCount = db.Lessons.Count(l => l.TopicId == t.Id)
                 })
                 .ToListAsync();
@@ -54,8 +70,14 @@ public static class CourseEndpoints
             var lessons = await db.Lessons
                 .Where(l => l.TopicId == topicId)
                 .OrderBy(l => l.Order)
-                .Select(l => new {
-                    l.Id, l.Title, l.Description, l.XpReward, l.Order
+                .Select(l => new
+                {
+                    l.Id,
+                    l.Title,
+                    l.Description,
+                    l.XpReward,
+                    l.Order,
+                    l.Content
                 })
                 .ToListAsync();
             return Results.Ok(lessons);

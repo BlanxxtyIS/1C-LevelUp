@@ -228,12 +228,6 @@ export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
               <User size={16} />
             </button>
             <button
-              onClick={onAdmin}
-              className="text-xs text-slate-500 hover:text-violet-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-violet-800"
-            >
-              Admin
-            </button>
-            <button
               onClick={logout}
               className="text-xs text-slate-500 hover:text-red-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-red-900"
             >

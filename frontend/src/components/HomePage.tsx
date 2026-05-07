@@ -6,9 +6,10 @@ interface Props {
   onLevelMap: () => void
   onCourses: () => void
   onProfile: () => void
+  onAdmin: () => void
 }
 
-export default function HomePage({ onLevelMap, onCourses, onProfile }: Props) {
+export default function HomePage({ onLevelMap, onCourses, onProfile, onAdmin }: Props) {
   const { user, logout } = useAuth()
 
   return (
@@ -16,27 +17,25 @@ export default function HomePage({ onLevelMap, onCourses, onProfile }: Props) {
       <div className="max-w-lg mx-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h1 className="text-3xl font-bold text-white">
-              1C <span className="text-violet-400">LevelUp</span>
-            </h1>
-            <p className="text-slate-500 text-sm mt-1">Привет, {user?.name ?? user?.username}! 👋</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onProfile}
-              className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
-            >
-              <User size={16} />
-            </button>
-            <button
-              onClick={logout}
-              className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-red-400 hover:border-red-900 transition-colors"
-            >
-              <LogOut size={16} />
-            </button>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onProfile}
+            className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
+          >
+            <User size={16} />
+          </button>
+          <button
+            onClick={onAdmin}
+            className="text-xs text-slate-500 hover:text-violet-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-violet-800"
+          >
+            Admin
+          </button>
+          <button
+            onClick={logout}
+            className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-red-400 hover:border-red-900 transition-colors"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
 
         {/* XP Bar */}

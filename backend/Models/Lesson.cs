@@ -8,6 +8,7 @@ public class Lesson
     public int XpReward {get; set; }
     public int Order {get; set; }
     public string Topic {get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
     public int? TopicId { get; set; }   
     public Topic? TopicRef { get; set; } 
     public ICollection<Question> Questions {get; set;} = new List<Question>();
