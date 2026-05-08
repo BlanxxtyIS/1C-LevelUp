@@ -1,0 +1,66 @@
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { getMe } from '../api'
+
+interface User {
+  id: number
+  username: string
+  email: string
+  totalXp: number
+  level: number
+  completedLessons: number
+}
+
+interface AuthContextType {
+  user: User | null
+  token: string | null
+  loading: boolean
+  login: (token: string, user: User) => void
+  logout: () => void
+}
+
+const AuthContext = createContext<AuthContextType>(null!)
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token')
+    if (savedToken) {
+      getMe(savedToken).then(userData => {
+        if (userData) {
+          setToken(savedToken)
+          setUser(userData)
+        } else {
+          localStorage.removeItem('token')
+        }
+        setLoading(false)
+      })
+    } else {
+      setLoading(false)
+    }
+  }, [])
+
+  function login(token: string, user: User) {
+    localStorage.setItem('token', token)
+    setToken(token)
+    setUser(user)
+  }
+
+  function logout() {
+    localStorage.removeItem('token')
+    setToken(null)
+    setUser(null)
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  return useContext(AuthContext)
+}

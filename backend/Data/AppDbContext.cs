@@ -12,6 +12,10 @@ public class AppDbContext : DbContext
     public DbSet<Question> Questions => Set<Question>();
     public DbSet<UserProgress> UserProgress => Set<UserProgress>();
 
+    public DbSet<Course> Courses => Set<Course>();
+    public DbSet<Chapter> Chapters => Set<Chapter>();
+    public DbSet<Topic> Topics => Set<Topic>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Один урок — много вопросов
@@ -30,6 +34,41 @@ public class AppDbContext : DbContext
             .HasOne(p => p.Lesson)
             .WithMany()
             .HasForeignKey(p => p.LessonId);
+
+        modelBuilder.Entity<Chapter>()
+            .HasOne(c => c.Course)
+            .WithMany(c => c.Chapters)
+            .HasForeignKey(c => c.CourseId);
+
+        modelBuilder.Entity<Topic>()
+            .HasOne(t => t.Chapter)
+            .WithMany(c => c.Topics)
+            .HasForeignKey(t => t.ChapterId);
+
+        modelBuilder.Entity<Lesson>()
+            .HasOne(l => l.TopicRef)
+            .WithMany(t => t.Lessons)
+            .HasForeignKey(l => l.TopicId)
+            .IsRequired(false);
+
+        // Seed — первый курс
+        modelBuilder.Entity<Course>().HasData(
+            new Course { Id = 1, Title = "1С Основы", Description = "Фундамент платформы 1С:Предприятие", Emoji = "🏗️", Color = "#7c3aed", Order = 1 }
+        );
+
+        modelBuilder.Entity<Chapter>().HasData(
+            new Chapter { Id = 1, CourseId = 1, Title = "Введение в платформу", Description = "Что такое 1С и как она устроена", Order = 1 },
+            new Chapter { Id = 2, CourseId = 1, Title = "Объекты конфигурации", Description = "Справочники, документы, регистры", Order = 2 },
+            new Chapter { Id = 3, CourseId = 1, Title = "Язык запросов", Description = "Получение данных из БД", Order = 3 }
+        );
+
+        modelBuilder.Entity<Topic>().HasData(
+            new Topic { Id = 1, ChapterId = 1, Title = "Что такое 1С?", Description = "Обзор платформы", Order = 1 },
+            new Topic { Id = 2, ChapterId = 1, Title = "Конфигуратор", Description = "Среда разработки", Order = 2 },
+            new Topic { Id = 3, ChapterId = 2, Title = "Справочники", Description = "Условно-постоянные данные", Order = 1 },
+            new Topic { Id = 4, ChapterId = 2, Title = "Документы", Description = "Хозяйственные операции", Order = 2 },
+            new Topic { Id = 5, ChapterId = 3, Title = "Основы запросов", Description = "SELECT в языке 1С", Order = 1 }
+        );
 
         // Seed — начальные данные
         modelBuilder.Entity<Lesson>().HasData(

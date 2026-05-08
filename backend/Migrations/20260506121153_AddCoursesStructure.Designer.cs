@@ -3,6 +3,7 @@ using System;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260506121153_AddCoursesStructure")]
+    partial class AddCoursesStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,16 +131,9 @@ namespace backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("DurationMinutes")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -166,9 +162,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 1,
-                            Content = "",
                             Description = "Введение в платформу",
-                            DurationMinutes = 5,
                             Order = 1,
                             Title = "Что такое 1С?",
                             Topic = "1c-basics",
@@ -177,9 +171,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 2,
-                            Content = "",
                             Description = "Конфигуратор и режим предприятия",
-                            DurationMinutes = 5,
                             Order = 2,
                             Title = "Интерфейс платформы",
                             Topic = "1c-basics",
@@ -188,9 +180,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 3,
-                            Content = "",
                             Description = "Хранение условно-постоянных данных",
-                            DurationMinutes = 5,
                             Order = 3,
                             Title = "Справочники",
                             Topic = "1c-basics",
@@ -199,9 +189,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 4,
-                            Content = "",
                             Description = "Хозяйственные операции",
-                            DurationMinutes = 5,
                             Order = 4,
                             Title = "Документы",
                             Topic = "1c-basics",
@@ -210,9 +198,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 5,
-                            Content = "",
                             Description = "Накопление и хранение данных",
-                            DurationMinutes = 5,
                             Order = 5,
                             Title = "Регистры",
                             Topic = "1c-basics",
@@ -221,9 +207,7 @@ namespace backend.Migrations
                         new
                         {
                             Id = 6,
-                            Content = "",
                             Description = "Язык запросов 1С",
-                            DurationMinutes = 5,
                             Order = 6,
                             Title = "Запросы",
                             Topic = "1c-basics",

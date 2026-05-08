@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* * {
+  background-image: none;
+} */
+
+body {
+  background: #0f0f1a;
+}

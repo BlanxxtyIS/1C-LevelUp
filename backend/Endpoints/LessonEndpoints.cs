@@ -103,6 +103,7 @@ public static class LessonEndpoints
             {
                 user.Id,
                 user.Name,
+                user.Email,
                 user.TotalXp,
                 user.Level,
                 CompletedLessons = completedCount

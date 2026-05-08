@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Lock, Star, CheckCircle, Play, Loader2 } from 'lucide-react'
+import { Lock, Star, CheckCircle, Play, Loader2, User } from 'lucide-react'
 import LessonScreen from './LessonScreen'
-import { getLessons, getOrCreateTestUser, saveProgress, getUserProfile } from '../api'
+import { getLessons, saveProgress, getUserProfile } from '../api'
+import { useAuth } from '../context/AuthContext'
 
 type LessonStatus = 'completed' | 'active' | 'locked'
 
@@ -23,8 +24,9 @@ interface UserProfile {
 
 interface Props {
   onAdmin: () => void
+  onProfile: () => void
+  onHome: () => void
 }
-
 
 const statusConfig = {
   completed: {
@@ -110,47 +112,84 @@ function LessonNode({ lesson, index, onClick }: { lesson: Lesson; index: number;
   )
 }
 
-function Connector({ fromIndex }: { fromIndex: number }) {
+function Connector({ fromIndex, status }: { fromIndex: number; status: LessonStatus }) {
   const isLeft = fromIndex % 2 === 0
+  const isCompleted = status === 'completed'
+
+  // Змейка идёт влево если узел слева, вправо если справа
+  const width = 80
+  const height = 80
+
+  // Точки кривой Безье — создают плавный изгиб
+  const path = isLeft
+    ? `M 32 0 C 32 40, 48 40, 48 80`
+    : `M 48 0 C 48 40, 32 40, 32 80`
+
   return (
-    <div className="flex" style={{ justifyContent: isLeft ? 'flex-start' : 'flex-end' }}>
-      <motion.div
-        className="w-0.5 h-10 bg-gradient-to-b from-slate-500 to-slate-700 ml-8 mr-8"
-        initial={{ scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={{ delay: fromIndex * 0.1 + 0.2 }}
-      />
+    <div className="flex justify-center" style={{ height }}>
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 80 80`}
+        fill="none"
+      >
+        {/* Фоновая линия (серая) */}
+        <motion.path
+          d={path}
+          stroke="#334155"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="6 6"
+          fill="none"
+        />
+
+        {/* Линия прогресса (цветная) поверх */}
+        {isCompleted && (
+          <motion.path
+            d={path}
+            stroke="#10b981"
+            strokeWidth="4"
+            strokeLinecap="round"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.6, delay: fromIndex * 0.1 }}
+          />
+        )}
+      </svg>
     </div>
   )
 }
 
-export default function LevelMap({ onAdmin }: Props) {
+export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [user, setUser] = useState<UserProfile | null>(null)
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const { user: authUser, logout } = useAuth()
+
   useEffect(() => {
+    if (!authUser) return
     async function init() {
-      const u = await getOrCreateTestUser()
       const [lessonsData, profileData] = await Promise.all([
-        getLessons(u.id),
-        getUserProfile(u.id)
+        getLessons(authUser!.id),
+        getUserProfile(authUser!.id)
       ])
       setUser(profileData)
       setLessons(lessonsData)
       setLoading(false)
     }
     init()
-  }, [])
+  }, [authUser])
 
   async function handleComplete(xpEarned: number) {
-    if (!openLesson || !user) return
-    await saveProgress(user.id, openLesson.id, xpEarned)
+    if (!openLesson || !authUser) return
+    await saveProgress(authUser.id, openLesson.id, xpEarned)
 
     const [lessonsData, profileData] = await Promise.all([
-      getLessons(user.id),
-      getUserProfile(user.id)
+      getLessons(authUser.id),
+      getUserProfile(authUser.id)
     ])
     setLessons(lessonsData)
     setUser(profileData)
@@ -168,22 +207,33 @@ export default function LevelMap({ onAdmin }: Props) {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0f0f1a' }}>
-      <div className="px-6 pt-8 pb-4">
+    <div className="px-6 pt-8 pb-4" style={{ background: '#0f0f1a' }}>
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between">
           <motion.h1
-            className="text-3xl font-bold text-white"
+            className="text-3xl font-bold text-white cursor-pointer"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
+            onClick={onHome}
           >
             1C <span className="text-violet-400">LevelUp</span>
           </motion.h1>
-          <button
-            onClick={onAdmin}
-            className="text-xs text-slate-500 hover:text-violet-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-violet-800"
-          >
-            Admin
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onProfile}
+              className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
+              title={authUser?.username}
+            >
+              <User size={16} />
+            </button>
+            <button
+              onClick={logout}
+              className="text-xs text-slate-500 hover:text-red-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-red-900"
+            >
+              Выйти
+            </button>
+          </div>
         </div>
 
         {user && (
@@ -212,7 +262,8 @@ export default function LevelMap({ onAdmin }: Props) {
               index={index}
               onClick={() => lesson.status === 'active' && setOpenLesson(lesson)}
             />
-            {index < lessons.length - 1 && <Connector fromIndex={index} />}
+            {index < lessons.length - 1 &&
+              <Connector fromIndex={index} status={lesson.status} />}
           </div>
         ))}
       </div>
