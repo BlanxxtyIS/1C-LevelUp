@@ -77,7 +77,8 @@ public static class CourseEndpoints
                     l.Description,
                     l.XpReward,
                     l.Order,
-                    l.Content
+                    l.Content,
+                    l.DurationMinutes
                 })
                 .ToListAsync();
             return Results.Ok(lessons);

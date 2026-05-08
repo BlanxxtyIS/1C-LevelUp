@@ -54,6 +54,7 @@ public static class AdminEndpoints
             lesson.Order = req.Order;
             lesson.Topic = req.Topic ?? string.Empty;
             lesson.Content = req.Content ?? string.Empty;
+            lesson.DurationMinutes = req.DurationMinutes ?? 5;
             await db.SaveChangesAsync();
             return Results.Ok(lesson);
         });
@@ -312,7 +313,7 @@ public static class AdminEndpoints
 
         // ── Уроки темы ──────────────────────────────────────────
 
-        app.MapGet("/topics/{topicId}/lessons", async (int topicId, AppDbContext db) =>
+        admin.MapGet("/topics/{topicId}/lessons", async (int topicId, AppDbContext db) =>
         {
             var lessons = await db.Lessons
                 .Where(l => l.TopicId == topicId)
@@ -324,28 +325,31 @@ public static class AdminEndpoints
                     l.Description,
                     l.XpReward,
                     l.Order,
-                    l.Content
+                    l.Content,
+                    l.DurationMinutes,
+                    QuestionCount = db.Questions.Count(q => q.LessonId == l.Id)
                 })
                 .ToListAsync();
             return Results.Ok(lessons);
         });
 
         admin.MapPost("/topics/{topicId}/lessons", async (int topicId, TopicLessonRequest req, AppDbContext db) =>
-        {
-            var lesson = new Lesson
             {
-                Title = req.Title,
-                Description = req.Description,
-                XpReward = req.XpReward,
-                Order = req.Order,
-                Content = req.Content,
-                Topic = string.Empty,
-                TopicId = topicId
-            };
-            db.Lessons.Add(lesson);
-            await db.SaveChangesAsync();
-            return Results.Ok(lesson);
-        });
+                var lesson = new Lesson
+                {
+                    Title = req.Title,
+                    Description = req.Description,
+                    XpReward = req.XpReward,
+                    Order = req.Order,
+                    Content = req.Content,
+                    Topic = string.Empty,
+                    TopicId = topicId,
+                    DurationMinutes = req.DurationMinutes
+                };
+                db.Lessons.Add(lesson);
+                await db.SaveChangesAsync();
+                return Results.Ok(lesson);
+            });
 
         // admin.MapDelete("/lessons/{id}", async (int id, AppDbContext db) =>
         // {
@@ -361,9 +365,9 @@ public static class AdminEndpoints
 }
 
 
-public record LessonRequest(string Title, string Description, int XpReward, int Order, string Topic, string? Content = null);
+public record LessonRequest(string Title, string Description, int XpReward, int Order, string Topic, string? Content = null, int? DurationMinutes = null);
 public record QuestionRequest(string Text, string[] Options, int CorrectIndex, string Explanation);
 public record CourseRequest(string Title, string Description, string Emoji, string Color, int Order);
 public record ChapterRequest(string Title, string Description, int Order);
 public record TopicRequest(string Title, string Description, int Order);
-public record TopicLessonRequest(string Title, string Description, int XpReward, int Order, string Content);
+public record TopicLessonRequest(string Title, string Description, int XpReward, int Order, string Content, int DurationMinutes = 5);

@@ -9,7 +9,8 @@ public class Lesson
     public int Order {get; set; }
     public string Topic {get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
-    public int? TopicId { get; set; }   
+    public int? TopicId { get; set; }
+    public int DurationMinutes { get; set; } = 5;   
     public Topic? TopicRef { get; set; } 
     public ICollection<Question> Questions {get; set;} = new List<Question>();
 }

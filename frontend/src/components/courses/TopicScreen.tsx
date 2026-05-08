@@ -21,6 +21,7 @@ interface Lesson {
   title: string
   content: string
   xpReward: number
+  durationMinutes: number
 }
 
 interface Props {
@@ -65,7 +66,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
         </div>
         <div className="flex items-center gap-3 text-xs text-slate-500">
           <span className="flex items-center gap-1">
-            <Clock size={12} /> {lessons.length * 3} мин
+            <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
           </span>
           <span className="flex items-center gap-1">
             <Zap size={12} className="text-yellow-400" /> +{totalXp} XP

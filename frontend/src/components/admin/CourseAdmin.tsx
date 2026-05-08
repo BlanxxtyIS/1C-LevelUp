@@ -40,8 +40,9 @@ const LESSON_FIELDS = [
   { key: 'title', label: 'Название', placeholder: 'Введение' },
   { key: 'description', label: 'Описание', placeholder: 'Описание урока' },
   { key: 'xpReward', label: 'XP', type: 'number' as const },
+  { key: 'durationMinutes', label: 'Время (мин)', type: 'number' as const },
   { key: 'order', label: 'Порядок', type: 'number' as const },
-  { key: 'content', label: 'Контент (Markdown)', placeholder: `## Заголовок\n\nТекст урока...\n\n**Жирный текст**\n\n- Пункт 1\n- Пункт 2`, type: 'textarea' as const },
+  { key: 'content', label: 'Контент (Markdown)', placeholder: '## Заголовок\n\nТекст...', type: 'textarea' as const },
 ]
 
 
@@ -56,7 +57,12 @@ export default function CourseAdmin() {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
   const [modal, setModal] = useState<{ open: boolean; item?: any }>({ open: false })
 
-  useEffect(() => { loadCourses() }, [])
+  useEffect(() => {
+    loadCourses()
+    const handler = () => setModal({ open: true })
+    window.addEventListener('courseAdminAdd', handler)
+    return () => window.removeEventListener('courseAdminAdd', handler)
+  }, [])
 
   async function loadCourses() { setCourses(await adminGetCourses()) }
   async function loadChapters(id: number) { setChapters(await adminGetChapters(id)) }
@@ -137,16 +143,6 @@ export default function CourseAdmin() {
           </button>
         )}
         <h2 className="text-white font-bold text-lg">{breadcrumb}</h2>
-      </div>
-
-      {/* Add button */}
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={() => setModal({ open: true })}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors"
-        >
-          <Plus size={16} /> {addLabel}
-        </button>
       </div>
 
       {/* List */}

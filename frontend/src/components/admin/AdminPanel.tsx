@@ -98,6 +98,14 @@ export default function AdminPanel({ onBack }: Props) {
             <Plus size={16} /> Урок
           </button>
         )}
+        {tab === 'courses' && (
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('courseAdminAdd'))}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+          >
+            <Plus size={16} /> Добавить
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -106,9 +114,8 @@ export default function AdminPanel({ onBack }: Props) {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-              tab === t ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
-            }`}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${tab === t ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+              }`}
           >
             {t === 'lessons' ? '🎮 Игровые уроки' : '📚 Курсы'}
           </button>

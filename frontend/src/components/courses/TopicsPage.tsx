@@ -46,8 +46,8 @@ export default function TopicsPage({ course, chapter, onBack, onTopic }: Props) 
   )
 
   return (
-    <div className="min-h-screen px-4 py-8" style={{ background: '#0f0f1a' }}>
-      <div className="max-w-lg mx-auto">
+    <div className="px-6 pt-8 pb-4" style={{ background: '#0f0f1a' }}>
+      <div className="max-w-2xl mx-auto">
 
         <div className="flex items-center gap-3 mb-2">
           <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors">
