@@ -1,13 +1,16 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
+import type { ReactNode } from 'react'
 import { getMe } from '../api'
 
 interface User {
   id: number
   username: string
+  name: string
   email: string
   totalXp: number
   level: number
   completedLessons: number
+  role: string
 }
 
 interface AuthContextType {

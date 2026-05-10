@@ -8,6 +8,8 @@ import {
 import LessonModal from './LessonModal'
 import QuestionModal from './QuestionModal'
 import CourseAdmin from './CourseAdmin'
+import UsersAdmin from './UserAdmin'
+import { useAuth } from '../../context/AuthContext'
 
 interface Lesson {
   id: number; title: string; description: string
@@ -29,7 +31,8 @@ export default function AdminPanel({ onBack }: Props) {
   const [questions, setQuestions] = useState<Record<number, Question[]>>({})
   const [lessonModal, setLessonModal] = useState<{ open: boolean; lesson?: Lesson }>({ open: false })
   const [questionModal, setQuestionModal] = useState<{ open: boolean; lessonId?: number; question?: Question }>({ open: false })
-  const [tab, setTab] = useState<'lessons' | 'courses'>('lessons')
+  const [tab, setTab] = useState<'lessons' | 'courses' | 'users'>('lessons')
+  const { user: currentUser } = useAuth()
 
   useEffect(() => { loadLessons() }, [])
 
@@ -110,22 +113,26 @@ export default function AdminPanel({ onBack }: Props) {
 
       {/* Tabs */}
       <div className="flex bg-slate-800 rounded-2xl p-1 mb-6">
-        {(['lessons', 'courses'] as const).map(t => (
+        {([
+          { key: 'lessons', label: '🎮 Игровые уроки' },
+          { key: 'courses', label: '📚 Курсы' },
+          ...(currentUser?.role === 'Admin' ? [{ key: 'users', label: '👥 Пользователи' }] : [])
+        ] as { key: typeof tab; label: string }[]).map(t => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${tab === t ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
-              }`}
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+              tab === t.key ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+            }`}
           >
-            {t === 'lessons' ? '🎮 Игровые уроки' : '📚 Курсы'}
+            {t.label}
           </button>
         ))}
       </div>
 
-      {/* Courses tab */}
       {tab === 'courses' && <CourseAdmin />}
+      {tab === 'users' && <UsersAdmin />}
 
-      {/* Lessons tab */}
       {tab === 'lessons' && (
         <div className="flex flex-col gap-3">
           {lessons.map((lesson, index) => (

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Clock, Zap, Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { getTopicLessons } from '../../api'
+import StarField from '../StarField'
 
 interface Topic {
   id: number
@@ -50,7 +51,8 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
   const totalXp = lessons.reduce((sum, l) => sum + l.xpReward, 0)
 
   return (
-    <div className="min-h-screen" style={{ background: '#0f0f1a' }}>
+    <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
+      <StarField />
 
       {/* Sticky header */}
       <div
@@ -75,7 +77,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
       </div>
 
       {/* Content */}
-      <div className="px-5 py-6 max-w-2xl mx-auto pb-24">
+      <div className="relative px-5 py-6 max-w-2xl mx-auto pb-24" style={{ zIndex: 1 }}>
         {lessons.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-4xl mb-4">📭</p>

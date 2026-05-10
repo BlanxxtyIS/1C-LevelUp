@@ -51,6 +51,10 @@ public class AppDbContext : DbContext
             .HasForeignKey(l => l.TopicId)
             .IsRequired(false);
 
+        modelBuilder.Entity<User>()
+            .Property(u => u.Role)
+            .HasDefaultValue("Student");
+
         // Seed — первый курс
         modelBuilder.Entity<Course>().HasData(
             new Course { Id = 1, Title = "1С Основы", Description = "Фундамент платформы 1С:Предприятие", Emoji = "🏗️", Color = "#7c3aed", Order = 1 }

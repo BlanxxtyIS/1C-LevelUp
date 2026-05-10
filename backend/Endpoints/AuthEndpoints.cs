@@ -10,7 +10,7 @@ namespace Backend.Endpoints;
 
 public static class AuthEndpoint
 {
-     public static void MapAuthEndpoints(this WebApplication app)
+    public static void MapAuthEndpoints(this WebApplication app)
     {
         app.MapPost("/auth/register", async (RegisterRequest req, AppDbContext db, IConfiguration config) =>
         {
@@ -65,6 +65,7 @@ public static class AuthEndpoint
                 user.Email,
                 user.TotalXp,
                 user.Level,
+                user.Role,
                 CompletedLessons = completedCount
             });
         }).RequireAuthorization();
@@ -80,6 +81,7 @@ public static class AuthEndpoint
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Role, user.Role ?? "Student"),
         };
 
         var token = new JwtSecurityToken(
@@ -97,7 +99,8 @@ public static class AuthEndpoint
         user.Name,
         user.Email,
         user.TotalXp,
-        user.Level
+        user.Level,
+        user.Role
     };
 }
 

@@ -40,13 +40,24 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+
+    // Проставляем роль Student всем у кого пусто
+    var usersWithoutRole = await db.Users
+        .Where(u => u.Role == null || u.Role == string.Empty)
+        .ToListAsync();
+    foreach (var u in usersWithoutRole)
+        u.Role = "Student";
+    if (usersWithoutRole.Any())
+        await db.SaveChangesAsync();
 }
 
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGet("/", () => "1C LevelUp API работает!");
 
-app.MapLessonEndpoints(); 
+app.MapLessonEndpoints();
 app.MapAdminEndpoints();
 app.MapAuthEndpoints();
 app.MapCourseEndpoints();
