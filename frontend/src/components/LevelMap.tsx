@@ -272,6 +272,7 @@ export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
         {openLesson && (
           <LessonScreen
             lessonId={openLesson.id}
+            xpReward={openLesson.xpReward}
             onClose={() => setOpenLesson(null)}
             onComplete={handleComplete}
           />

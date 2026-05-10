@@ -239,3 +239,17 @@ export async function adminUpdateUserRole(id: number, role: string) {
 export async function adminDeleteUser(id: number) {
   await fetch(`${BASE_URL}/admin/users/${id}`, { method: 'DELETE', headers: authHeaders() })
 }
+
+export async function saveTopicLessonProgress(userId: number, lessonId: number, xpEarned: number) {
+  const res = await fetch(`${BASE_URL}/progress/topic-lesson`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, lessonId, xpEarned })
+  })
+  return res.json()
+}
+
+export async function getCompletedLessons(userId: number) {
+  const res = await fetch(`${BASE_URL}/progress/${userId}/completed`)
+  return res.json()
+}

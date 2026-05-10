@@ -8,7 +8,7 @@ public static class LessonEndpoints
 {
     public static void MapLessonEndpoints(this WebApplication app)
     {
-     // Получить все уроки с прогрессом пользователя
+        // Получить все уроки с прогрессом пользователя
         app.MapGet("/lessons/{userId}", async (int userId, AppDbContext db) =>
         {
             var lessons = await db.Lessons
@@ -125,6 +125,47 @@ public static class LessonEndpoints
             db.Users.Add(user);
             await db.SaveChangesAsync();
             return Results.Ok(user);
+        });
+
+        // Сохранить прогресс курсового урока
+        app.MapPost("/progress/topic-lesson", async (ProgressRequest req, AppDbContext db) =>
+        {
+            var existing = await db.UserProgress
+                .FirstOrDefaultAsync(p => p.UserId == req.UserId && p.LessonId == req.LessonId);
+
+            if (existing != null)
+                return Results.Ok(existing);
+
+            var progress = new UserProgress
+            {
+                UserId = req.UserId,
+                LessonId = req.LessonId,
+                IsCOmpleted = true,
+                XpEarned = req.XpEarned,
+                CompletedAt = DateTime.UtcNow
+            };
+
+            db.UserProgress.Add(progress);
+
+            var user = await db.Users.FindAsync(req.UserId);
+            if (user != null)
+            {
+                user.TotalXp += req.XpEarned;
+                user.Level = (user.TotalXp / 50) + 1;
+            }
+
+            await db.SaveChangesAsync();
+            return Results.Ok(progress);
+        });
+
+        // Получить пройденные уроки пользователя
+        app.MapGet("/progress/{userId}/completed", async (int userId, AppDbContext db) =>
+        {
+            var completed = await db.UserProgress
+                .Where(p => p.UserId == userId && p.IsCOmpleted)
+                .Select(p => p.LessonId)
+                .ToListAsync();
+            return Results.Ok(completed);
         });
     }
 }

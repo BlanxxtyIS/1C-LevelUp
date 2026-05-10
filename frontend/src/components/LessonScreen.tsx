@@ -13,11 +13,12 @@ interface Question {
 
 interface Props {
   lessonId: number
+  xpReward: number
   onClose: () => void
   onComplete: (xp: number) => void
 }
 
-export default function LessonScreen({ lessonId, onClose, onComplete }: Props) {
+export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }: Props) {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [current, setCurrent] = useState(0)
@@ -26,6 +27,7 @@ export default function LessonScreen({ lessonId, onClose, onComplete }: Props) {
   const [lives, setLives] = useState(3)
   const [xpEarned, setXpEarned] = useState(0)
   const [finished, setFinished] = useState(false)
+  const [mood, setMood] = useState<'idle' | 'correct' | 'wrong' | 'celebrate'>('idle')
 
   useEffect(() => {
     getLessonQuestions(lessonId).then(data => {
@@ -53,22 +55,26 @@ export default function LessonScreen({ lessonId, onClose, onComplete }: Props) {
   if (!question) {
     return null
   }
-  
+
   function handleAnswer(index: number) {
     if (answerState !== 'idle') return
     setSelected(index)
     if (index === question.correctIndex) {
       setAnswerState('correct')
-      setXpEarned(p => p + 10)
+      setXpEarned(p => p + Math.floor(xpReward / questions.length))
+      setMood('correct')
     } else {
       setAnswerState('wrong')
+      setMood('wrong')
       setLives(p => p - 1)
     }
   }
 
   function handleNext() {
+    setMood('idle')
     if (current + 1 >= questions.length) {
       setFinished(true)
+      setMood('celebrate')
     } else {
       setCurrent(p => p + 1)
       setSelected(null)
@@ -214,7 +220,9 @@ export default function LessonScreen({ lessonId, onClose, onComplete }: Props) {
                 {answerState === 'correct' && (
                   <div className="flex items-center gap-1 mt-2">
                     <Zap size={14} className="text-yellow-400" />
-                    <span className="text-yellow-400 text-sm font-semibold">+10 XP</span>
+                    <span className="text-yellow-400 text-sm font-semibold">
+                      +{Math.floor(xpReward / questions.length)} XP
+                    </span>
                   </div>
                 )}
               </div>
