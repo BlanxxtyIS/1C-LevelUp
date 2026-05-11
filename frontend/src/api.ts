@@ -253,3 +253,13 @@ export async function getCompletedLessons(userId: number) {
   const res = await fetch(`${BASE_URL}/progress/${userId}/completed`)
   return res.json()
 }
+
+export async function getChapterProgress(chapterId: number, userId: number) {
+  const res = await fetch(`${BASE_URL}/chapters/${chapterId}/progress/${userId}`)
+  return res.json()
+}
+
+export async function getCourseProgress(courseId: number, userId: number) {
+  const res = await fetch(`${BASE_URL}/courses/${courseId}/progress/${userId}`)
+  return res.json()
+}

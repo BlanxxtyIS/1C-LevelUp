@@ -88,34 +88,33 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
 
-      {/* Sticky header */}
-      <div
-        className="sticky top-0 z-10 px-4 py-4 flex items-center gap-3 border-b border-slate-800/60"
-        style={{ background: 'rgba(15,15,26,0.95)', backdropFilter: 'blur(8px)' }}
-      >
-        <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors">
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex-1 min-w-0">
-          <p className="text-slate-500 text-xs">{course.emoji} {course.title}</p>
-          <p className="text-white font-semibold text-sm truncate">{topic.title}</p>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-slate-500">
-          <span className="flex items-center gap-1">
-            <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
-          </span>
-          {totalXp > 0 && (
-            <span className="flex items-center gap-1">
-              <Zap size={12} className="text-yellow-400" /> +{totalXp} XP
-            </span>
-          )}
-          {allDone && (
-            <span className="flex items-center gap-1 text-emerald-400">
-              <CheckCircle size={12} /> Пройдено
-            </span>
-          )}
-        </div>
-      </div>
+      {/* Header */}
+<div className="px-6 pt-8 pb-2">
+  <div className="max-w-2xl mx-auto flex items-center gap-3">
+    <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors shrink-0">
+      <ArrowLeft size={20} />
+    </button>
+    <div className="flex-1 min-w-0">
+      <p className="text-slate-500 text-xs">{course.emoji} {course.title}</p>
+      <h1 className="text-xl font-bold text-white truncate">{topic.title}</h1>
+    </div>
+    <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0">
+      <span className="flex items-center gap-1">
+        <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
+      </span>
+      {totalXp > 0 && (
+        <span className="flex items-center gap-1">
+          <Zap size={12} className="text-yellow-400" /> +{totalXp} XP
+        </span>
+      )}
+      {allDone && (
+        <span className="flex items-center gap-1 text-emerald-400">
+          <CheckCircle size={12} /> Пройдено
+        </span>
+      )}
+    </div>
+  </div>
+</div>
 
       {/* Content */}
       <div className="relative px-5 py-6 max-w-2xl mx-auto pb-24" style={{ zIndex: 1 }}>
@@ -138,9 +137,8 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
               >
                 {lessons.length > 1 && (
                   <div className="flex items-center gap-2 mb-4">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      isCompleted ? 'bg-emerald-500' : 'bg-violet-600'
-                    } text-white`}>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isCompleted ? 'bg-emerald-500' : 'bg-violet-600'
+                      } text-white`}>
                       {isCompleted ? '✓' : index + 1}
                     </div>
                     <h2 className={`font-bold ${isCompleted ? 'text-emerald-400' : 'text-white'}`}>
@@ -178,11 +176,10 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
           <button
             onClick={handleComplete}
             disabled={saving}
-            className={`w-full py-4 rounded-2xl text-white font-bold text-lg transition-colors ${
-              allDone
-                ? 'bg-emerald-600 hover:bg-emerald-500'
-                : 'bg-violet-600 hover:bg-violet-500'
-            } disabled:opacity-50`}
+            className={`w-full py-4 rounded-2xl text-white font-bold text-lg transition-colors ${allDone
+              ? 'bg-emerald-600 hover:bg-emerald-500'
+              : 'bg-violet-600 hover:bg-violet-500'
+              } disabled:opacity-50`}
           >
             {saving ? 'Сохраняем...' : allDone ? '✓ Пройдено' : `Готово — получить ${totalXp} XP`}
           </button>
