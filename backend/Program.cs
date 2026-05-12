@@ -29,13 +29,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins(
-            "http://localhost:5173",
-            "https://*.vercel.app",
-            Environment.GetEnvironmentVariable("FRONTEND_URL") ?? ""
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod());
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());
 });
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5184";
