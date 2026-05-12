@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Map, BookOpen, Trophy, User, LogOut } from 'lucide-react'
+import { Map, BookOpen, Trophy, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import StarField from './StarField'
 import Avatar from './Avatar'

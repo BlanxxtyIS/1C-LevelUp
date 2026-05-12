@@ -19,7 +19,7 @@ interface Props {
   onBack: () => void
 }
 
-const medalColors = ['#FFD700', '#C0C0C0', '#CD7F32']
+//const medalColors = ['#FFD700', '#C0C0C0', '#CD7F32']
 const medalEmojis = ['🥇', '🥈', '🥉']
 
 export default function LeaderboardPage({ onBack }: Props) {

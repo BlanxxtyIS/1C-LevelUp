@@ -23,7 +23,6 @@ interface UserProfile {
 }
 
 interface Props {
-  onAdmin: () => void
   onProfile: () => void
   onHome: () => void
 }
@@ -161,7 +160,7 @@ function Connector({ fromIndex, status }: { fromIndex: number; status: LessonSta
   )
 }
 
-export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
+export default function LevelMap({onProfile, onHome }: Props) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [user, setUser] = useState<UserProfile | null>(null)
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)

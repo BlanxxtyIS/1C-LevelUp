@@ -29,7 +29,7 @@ function App() {
 
   if (page === 'admin') return <AdminPanel onBack={() => setPage('home')} />
   if (page === 'profile') return <ProfileScreen onBack={() => setPage('home')} />
-  if (page === 'map') return <LevelMap onAdmin={() => setPage('admin')} onProfile={() => setPage('profile')} onHome={() => setPage('home')} />
+  if (page === 'map') return <LevelMap onProfile={() => setPage('profile')} onHome={() => setPage('home')} />
 
   if (page === 'courses') return (
     <CoursesPage

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Pencil, Trash2, ChevronRight, ArrowLeft, Zap } from 'lucide-react'
+import { Pencil, Trash2, ChevronRight, ArrowLeft, Zap } from 'lucide-react'
 import {
   adminGetCourses, adminCreateCourse, adminUpdateCourse, adminDeleteCourse,
   adminGetChapters, adminCreateChapter, adminUpdateChapter, adminDeleteChapter,

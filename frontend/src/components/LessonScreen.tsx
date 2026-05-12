@@ -27,7 +27,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
   const [lives, setLives] = useState(3)
   const [xpEarned, setXpEarned] = useState(0)
   const [finished, setFinished] = useState(false)
-  const [mood, setMood] = useState<'idle' | 'correct' | 'wrong' | 'celebrate'>('idle')
+  const [_mood, setMood] = useState<'idle' | 'correct' | 'wrong' | 'celebrate'>('idle')
 
   useEffect(() => {
     getLessonQuestions(lessonId).then(data => {
