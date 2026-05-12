@@ -61,6 +61,7 @@ app.MapLessonEndpoints();
 app.MapAdminEndpoints();
 app.MapAuthEndpoints();
 app.MapCourseEndpoints();
+app.MapStreakEndpoints();
 
 app.Run();
 

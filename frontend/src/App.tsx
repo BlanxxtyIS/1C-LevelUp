@@ -9,8 +9,9 @@ import CoursesPage from './components/courses/CoursesPage'
 import ChaptersPage from './components/courses/ChaptersPage'
 import TopicsPage from './components/courses/TopicsPage'
 import TopicScreen from './components/courses/TopicScreen'
+import LeaderboardPage from './components/LeaderboardPage'
 
-type Page = 'home' | 'map' | 'admin' | 'profile' | 'courses' | 'chapters' | 'topics' | 'topic-screen'
+type Page = 'home' | 'map' | 'admin' | 'profile' | 'courses' | 'chapters' | 'topics' | 'topic-screen' | 'leaderboard'
 
 interface Course { id: number; title: string; emoji: string; color: string; description: string; chapterCount: number }
 interface Chapter { id: number; title: string; description: string; order: number; topicCount: number }
@@ -62,12 +63,16 @@ function App() {
     />
   )
 
+  if (page === 'leaderboard') return <LeaderboardPage onBack={() => setPage('home')} />
+
   return (
     <HomePage
+      onHome={() => setPage('home')}
       onLevelMap={() => setPage('map')}
       onCourses={() => setPage('courses')}
       onProfile={() => setPage('profile')}
       onAdmin={() => setPage('admin')}
+      onLeaderboard={() => setPage('leaderboard')}
     />
   )
 }

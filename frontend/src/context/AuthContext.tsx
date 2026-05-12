@@ -11,6 +11,7 @@ interface User {
   level: number
   completedLessons: number
   role: string
+  avatarUrl?: string | null
 }
 
 interface AuthContextType {

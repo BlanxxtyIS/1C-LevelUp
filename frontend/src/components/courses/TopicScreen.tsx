@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Clock, Zap, Loader2, CheckCircle } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
-import { getTopicLessons, saveTopicLessonProgress, getCompletedLessons } from '../../api'
+import { getTopicLessons, saveTopicLessonProgress, getCompletedLessons, updateActivity} from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
 
@@ -67,6 +67,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
     for (const lesson of unfinished) {
       await saveTopicLessonProgress(user.id, lesson.id, lesson.xpReward)
     }
+    await updateActivity(user.id)
 
     const updated = await getCompletedLessons(user.id)
     setCompletedIds(updated)

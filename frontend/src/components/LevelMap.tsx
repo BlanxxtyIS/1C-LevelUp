@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, Star, CheckCircle, Play, Loader2, User } from 'lucide-react'
 import LessonScreen from './LessonScreen'
-import { getLessons, saveProgress, getUserProfile } from '../api'
+import { getLessons, saveProgress, getUserProfile, updateActivity } from '../api'
 import { useAuth } from '../context/AuthContext'
 
 type LessonStatus = 'completed' | 'active' | 'locked'
@@ -186,7 +186,8 @@ export default function LevelMap({ onAdmin, onProfile, onHome }: Props) {
   async function handleComplete(xpEarned: number) {
     if (!openLesson || !authUser) return
     await saveProgress(authUser.id, openLesson.id, xpEarned)
-
+    await updateActivity(authUser.id)
+    
     const [lessonsData, profileData] = await Promise.all([
       getLessons(authUser.id),
       getUserProfile(authUser.id)

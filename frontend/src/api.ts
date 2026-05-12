@@ -263,3 +263,36 @@ export async function getCourseProgress(courseId: number, userId: number) {
   const res = await fetch(`${BASE_URL}/courses/${courseId}/progress/${userId}`)
   return res.json()
 }
+
+// Streaks & Achievements
+export async function getStreakAndAchievements(userId: number) {
+  const res = await fetch(`${BASE_URL}/streaks/${userId}`)
+  return res.json()
+}
+
+export async function updateActivity(userId: number) {
+  const res = await fetch(`${BASE_URL}/streaks/${userId}/activity`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  return res.json()
+}
+
+export async function getAllAchievements(userId: number) {
+  const res = await fetch(`${BASE_URL}/achievements/${userId}`)
+  return res.json()
+}
+
+export async function getLeaderboard() {
+  const res = await fetch(`${BASE_URL}/leaderboard`)
+  return res.json()
+}
+
+export async function updateAvatar(id: number, avatarUrl: string | null) {
+  const res = await fetch(`${BASE_URL}/users/${id}/avatar`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ avatarUrl })
+  })
+  return res.json()
+}

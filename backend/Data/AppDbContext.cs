@@ -15,6 +15,9 @@ public class AppDbContext : DbContext
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Chapter> Chapters => Set<Chapter>();
     public DbSet<Topic> Topics => Set<Topic>();
+    public DbSet<Streak> Streaks => Set<Streak>();
+    public DbSet<Achievement> Achievements => Set<Achievement>();
+    public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,6 +102,33 @@ public class AppDbContext : DbContext
             new Question { Id = 7, LessonId = 3, Text = "Что такое Справочник в 1С?", OptionsJson = "[\"Документ для записи операций\",\"Объект для хранения условно-постоянной информации\",\"Отчёт для вывода данных\",\"Регистр для накопления данных\"]", CorrectIndex = 1, Explanation = "Справочник хранит условно-постоянные данные — товары, контрагентов, сотрудников." },
             new Question { Id = 8, LessonId = 3, Text = "Какой реквизит есть у каждого Справочника по умолчанию?", OptionsJson = "[\"Дата\",\"Код и Наименование\",\"Сумма\",\"Количество\"]", CorrectIndex = 1, Explanation = "Каждый справочник автоматически имеет реквизиты Код и Наименование." },
             new Question { Id = 9, LessonId = 3, Text = "Как называется элемент справочника верхнего уровня при иерархии?", OptionsJson = "[\"Документ\",\"Папка (группа)\",\"Регистр\",\"Константа\"]", CorrectIndex = 1, Explanation = "В иерархических справочниках элементы группируются в Папки (группы)." }
+        );
+
+        modelBuilder.Entity<Streak>()
+            .HasOne(s => s.User)
+            .WithMany()
+            .HasForeignKey(s => s.UserId);
+
+        modelBuilder.Entity<UserAchievement>()
+            .HasOne(ua => ua.User)
+            .WithMany()
+            .HasForeignKey(ua => ua.UserId);
+
+        modelBuilder.Entity<UserAchievement>()
+            .HasOne(ua => ua.Achievement)
+            .WithMany()
+            .HasForeignKey(ua => ua.AchievementId);
+
+        // Seed достижений
+        modelBuilder.Entity<Achievement>().HasData(
+            new Achievement { Id = 1, Key = "first_lesson", Title = "Первый шаг", Description = "Пройти первый урок", Emoji = "🎯" },
+            new Achievement { Id = 2, Key = "xp_50", Title = "Новичок", Description = "Набрать 50 XP", Emoji = "⚡" },
+            new Achievement { Id = 3, Key = "xp_200", Title = "Ученик", Description = "Набрать 200 XP", Emoji = "📖" },
+            new Achievement { Id = 4, Key = "xp_500", Title = "Знаток", Description = "Набрать 500 XP", Emoji = "🧠" },
+            new Achievement { Id = 5, Key = "lessons_5", Title = "Книжный червь", Description = "Пройти 5 уроков", Emoji = "📚" },
+            new Achievement { Id = 6, Key = "lessons_10", Title = "Усердный", Description = "Пройти 10 уроков", Emoji = "💪" },
+            new Achievement { Id = 7, Key = "streak_3", Title = "Огонёк", Description = "3 дня подряд", Emoji = "🔥" },
+            new Achievement { Id = 8, Key = "streak_7", Title = "Неделя силы", Description = "7 дней подряд", Emoji = "🏆" }
         );
     }
 }

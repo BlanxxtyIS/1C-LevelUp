@@ -106,6 +106,7 @@ public static class LessonEndpoints
                 user.Email,
                 user.TotalXp,
                 user.Level,
+                user.AvatarUrl,
                 CompletedLessons = completedCount
             });
         });
@@ -167,7 +168,42 @@ public static class LessonEndpoints
                 .ToListAsync();
             return Results.Ok(completed);
         });
+
+        // Таблица лидеров
+        app.MapGet("/leaderboard", async (AppDbContext db) =>
+        {
+            var leaders = await db.Users
+                .OrderByDescending(u => u.TotalXp)
+                .Take(20)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.TotalXp,
+                    u.Level,
+                    u.AvatarUrl,
+                    CompletedLessons = db.UserProgress.Count(p => p.UserId == u.Id && p.IsCOmpleted)
+                })
+                .ToListAsync();
+            return Results.Ok(leaders);
+        });
+
+        // Обновить аватарку
+        app.MapPut("/users/{id}/avatar", async (int id, AvatarRequest req, AppDbContext db) =>
+        {
+            var user = await db.Users.FindAsync(id);
+            if (user == null) return Results.NotFound();
+
+            // Проверка размера — base64 строка не должна быть больше ~2.7MB (2MB файл)
+            if (req.AvatarUrl?.Length > 2_800_000)
+                return Results.BadRequest(new { error = "Файл слишком большой. Максимум 2MB." });
+
+            user.AvatarUrl = req.AvatarUrl;
+            await db.SaveChangesAsync();
+            return Results.Ok(new { user.Id, user.AvatarUrl });
+        });
     }
 }
 
 public record ProgressRequest(int UserId, int LessonId, int XpEarned);
+public record AvatarRequest(string? AvatarUrl);

@@ -66,6 +66,7 @@ public static class AuthEndpoint
                 user.TotalXp,
                 user.Level,
                 user.Role,
+                user.AvatarUrl,
                 CompletedLessons = completedCount
             });
         }).RequireAuthorization();
@@ -100,7 +101,8 @@ public static class AuthEndpoint
         user.Email,
         user.TotalXp,
         user.Level,
-        user.Role
+        user.Role,
+        user.AvatarUrl
     };
 }
 

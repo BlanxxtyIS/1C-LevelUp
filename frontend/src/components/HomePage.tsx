@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
-import { Map, BookOpen, User, LogOut } from 'lucide-react'
+import { Map, BookOpen, Trophy, User, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import StarField from './StarField'
+import Avatar from './Avatar'
 
 interface Props {
   onHome: () => void
@@ -9,9 +10,11 @@ interface Props {
   onCourses: () => void
   onProfile: () => void
   onAdmin: () => void
+  onLeaderboard: () => void
 }
 
-export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onAdmin }: Props) {
+export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onAdmin, onLeaderboard }: Props) {
+
   const { user, logout } = useAuth()
 
   return (
@@ -41,9 +44,9 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
             )}
             <button
               onClick={onProfile}
-              className="w-9 h-9 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
+              className="w-9 h-9 rounded-full overflow-hidden border border-violet-800 hover:border-violet-600 transition-colors"
             >
-              <User size={16} />
+              <Avatar name={user?.name ?? 'U'} avatarUrl={user?.avatarUrl} size={36} />
             </button>
             <button
               onClick={logout}
@@ -121,6 +124,29 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
                 <h2 className="text-white font-bold text-lg">Курсы</h2>
                 <p className="text-slate-400 text-sm mt-0.5">Главы, темы, материалы</p>
                 <p className="text-emerald-400 text-xs mt-1.5">↗ Как Яндекс Практикум</p>
+              </div>
+            </div>
+          </motion.button>
+
+          {/* Leaderboard */}
+          <motion.button
+            onClick={onLeaderboard}
+            className="w-full text-left rounded-2xl p-6 border border-yellow-800/50 hover:border-yellow-600 transition-colors"
+            style={{ background: 'linear-gradient(135deg, #1a1a2e, #1f1a0d)' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-yellow-600/20 border border-yellow-600/30 flex items-center justify-center">
+                <Trophy size={28} className="text-yellow-400" />
+              </div>
+              <div>
+                <h2 className="text-white font-bold text-lg">Лидеры</h2>
+                <p className="text-slate-400 text-sm mt-0.5">Топ игроков по XP</p>
+                <p className="text-yellow-400 text-xs mt-1.5">↗ Соревнуйся с другими</p>
               </div>
             </div>
           </motion.button>
