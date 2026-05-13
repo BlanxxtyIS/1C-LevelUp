@@ -12,6 +12,8 @@ interface User {
   completedLessons: number
   role: string
   avatarUrl?: string | null
+  isPremium: boolean
+  premiumUntil?: string | null
 }
 
 interface AuthContextType {

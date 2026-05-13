@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Map, BookOpen, Trophy, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import StarField from './StarField'
+import PremiumModal from './PremiumModal'
 import Avatar from './Avatar'
 
 interface Props {
@@ -11,11 +13,24 @@ interface Props {
   onProfile: () => void
   onAdmin: () => void
   onLeaderboard: () => void
+  onLegal: () => void
 }
 
-export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onAdmin, onLeaderboard }: Props) {
-
+export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onAdmin, onLeaderboard, onLegal }: Props) {
   const { user, logout } = useAuth()
+  const [showPremium, setShowPremium] = useState(false)
+
+  const isLocked = (user?.totalXp ?? 0) > 100 && !user?.isPremium
+
+  function handleLevelMap() {
+    if (isLocked) { setShowPremium(true); return }
+    onLevelMap()
+  }
+
+  function handleCourses() {
+    if (isLocked) { setShowPremium(true); return }
+    onCourses()
+  }
 
   return (
     <div className="min-h-screen px-6 py-8 relative" style={{ background: '#0f0f1a' }}>
@@ -60,14 +75,14 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
         {/* XP Bar */}
         {user && (
           <motion.div
-            className="rounded-2xl p-4 mb-8 border border-slate-800"
+            className="rounded-2xl p-4 mb-6 border border-slate-800"
             style={{ background: '#1a1a2e' }}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="flex justify-between text-xs text-slate-400 mb-2">
               <span>⚡ Уровень {user.level}</span>
-              <span>{user.totalXp} XP</span>
+              <span>{user.totalXp} XP {isLocked && <span className="text-violet-400 ml-1">· Нужна подписка 👑</span>}</span>
             </div>
             <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
               <motion.div
@@ -77,6 +92,12 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
                 transition={{ duration: 0.8 }}
               />
             </div>
+            {/* Прогресс до бесплатного лимита */}
+            {!user.isPremium && user.totalXp <= 100 && (
+              <p className="text-xs text-slate-500 mt-1">
+                Бесплатно ещё {100 - user.totalXp} XP
+              </p>
+            )}
           </motion.div>
         )}
 
@@ -84,9 +105,13 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
         <p className="text-slate-500 text-xs uppercase tracking-wider mb-4 font-semibold">Выбери режим</p>
 
         <div className="flex flex-col gap-4">
+          {/* Level Map */}
           <motion.button
-            onClick={onLevelMap}
-            className="w-full text-left rounded-2xl p-6 border border-violet-800/50 hover:border-violet-600 transition-colors"
+            onClick={handleLevelMap}
+            className={`w-full text-left rounded-2xl p-6 border transition-colors relative ${isLocked
+              ? 'border-slate-700/50 opacity-75'
+              : 'border-violet-800/50 hover:border-violet-600'
+              }`}
             style={{ background: 'linear-gradient(135deg, #1a1a2e, #16213e)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -94,6 +119,9 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
+            {isLocked && (
+              <div className="absolute top-3 right-3 text-lg">🔒</div>
+            )}
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-600/30 flex items-center justify-center">
                 <Map size={28} className="text-violet-400" />
@@ -106,9 +134,13 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
             </div>
           </motion.button>
 
+          {/* Courses */}
           <motion.button
-            onClick={onCourses}
-            className="w-full text-left rounded-2xl p-6 border border-emerald-800/50 hover:border-emerald-600 transition-colors"
+            onClick={handleCourses}
+            className={`w-full text-left rounded-2xl p-6 border transition-colors relative ${isLocked
+              ? 'border-slate-700/50 opacity-75'
+              : 'border-emerald-800/50 hover:border-emerald-600'
+              }`}
             style={{ background: 'linear-gradient(135deg, #1a1a2e, #0d1f1a)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,6 +148,9 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
+            {isLocked && (
+              <div className="absolute top-3 right-3 text-lg">🔒</div>
+            )}
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-600/30 flex items-center justify-center">
                 <BookOpen size={28} className="text-emerald-400" />
@@ -151,8 +186,17 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
             </div>
           </motion.button>
         </div>
-
+        <div className="text-center mt-8">
+          <button
+            onClick={onLegal}
+            className="text-xs text-slate-600 hover:text-slate-400 transition-colors"
+          >
+            Оферта · Реквизиты · Политика конфиденциальности
+          </button>
+        </div>
       </div>
+
+      {showPremium && <PremiumModal onClose={() => setShowPremium(false)} onLegal={onLegal} />}
     </div>
   )
 }
