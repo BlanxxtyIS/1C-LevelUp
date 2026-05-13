@@ -149,7 +149,7 @@ export default function LevelMap({ onProfile, onHome }: Props) {
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
   const [newAchievements, setNewAchievements] = useState<{ key: string; title: string; emoji: string }[]>([])
-  const { user: authUser, logout, refreshUser } = useAuth()
+  const { user: authUser, refreshUser } = useAuth()
 
   useEffect(() => {
     if (!authUser) return
