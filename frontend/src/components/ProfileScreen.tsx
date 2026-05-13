@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext'
 import { getUserProfile, getStreakAndAchievements, getAllAchievements, updateAvatar } from '../api'
 import Avatar from './Avatar'
 import StarField from './StarField'
+import PremiumGlow from './PremiumGlow'  // или './PremiumGlow' в зависимости от пути
+import PremiumBadge from './PremiumBadge'
 
 interface Props {
   onBack: () => void
@@ -88,6 +90,7 @@ export default function ProfileScreen({ onBack }: Props) {
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow />
       <div className="relative px-6 pt-8 pb-8" style={{ zIndex: 1 }}>
         <div className="max-w-2xl mx-auto">
 
@@ -97,6 +100,7 @@ export default function ProfileScreen({ onBack }: Props) {
               <ArrowLeft size={20} />
             </button>
             <h1 className="text-xl font-bold text-white">Профиль</h1>
+            <PremiumBadge />
           </div>
 
           {/* Avatar + name */}

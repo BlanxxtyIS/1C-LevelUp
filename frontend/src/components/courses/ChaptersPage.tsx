@@ -4,6 +4,8 @@ import { ArrowLeft, ChevronRight, Loader2, BookOpen, CheckCircle } from 'lucide-
 import { getCourseChapters, getCourseProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
+import PremiumGlow from '../PremiumGlow' 
+import PremiumBadge from '../PremiumBadge'
 
 interface Chapter {
   id: number
@@ -67,6 +69,7 @@ export default function ChaptersPage({ course, onBack, onChapter }: Props) {
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow />
       <div className="relative px-6 pt-8 pb-4" style={{ zIndex: 1 }}>
         <div className="max-w-2xl mx-auto">
 
@@ -77,6 +80,7 @@ export default function ChaptersPage({ course, onBack, onChapter }: Props) {
             <div className="flex-1 flex items-center gap-2">
               <span className="text-2xl">{course.emoji}</span>
               <h1 className="text-2xl font-bold text-white">{course.title}</h1>
+              <PremiumBadge />
             </div>
             {completedCount > 0 && (
               <span className="text-xs text-emerald-400 flex items-center gap-1">

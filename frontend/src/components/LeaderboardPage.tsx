@@ -5,6 +5,8 @@ import { getLeaderboard } from '../api'
 import { useAuth } from '../context/AuthContext'
 import StarField from './StarField'
 import Avatar from './Avatar'
+import PremiumGlow from './PremiumGlow' 
+import PremiumBadge from './PremiumBadge'
 
 interface Leader {
   id: number
@@ -45,6 +47,7 @@ export default function LeaderboardPage({ onBack }: Props) {
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow />
       <div className="relative px-6 pt-8 pb-4" style={{ zIndex: 1 }}>
         <div className="max-w-2xl mx-auto">
 
@@ -62,7 +65,9 @@ export default function LeaderboardPage({ onBack }: Props) {
               <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full">
                 Ты #{myPosition}
               </span>
+              
             )}
+            <PremiumBadge />
           </div>
           <p className="text-slate-500 text-sm mb-8 ml-9">Топ по очкам опыта</p>
 

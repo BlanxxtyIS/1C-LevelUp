@@ -10,8 +10,9 @@ import ChaptersPage from './components/courses/ChaptersPage'
 import TopicsPage from './components/courses/TopicsPage'
 import TopicScreen from './components/courses/TopicScreen'
 import LeaderboardPage from './components/LeaderboardPage'
+import LegalPage from './components/LegalPage'
 
-type Page = 'home' | 'map' | 'admin' | 'profile' | 'courses' | 'chapters' | 'topics' | 'topic-screen' | 'leaderboard'
+type Page = 'home' | 'map' | 'admin' | 'profile' | 'courses' | 'chapters' | 'topics' | 'topic-screen' | 'leaderboard' | 'legal'
 
 interface Course { id: number; title: string; emoji: string; color: string; description: string; chapterCount: number }
 interface Chapter { id: number; title: string; description: string; order: number; topicCount: number }
@@ -30,6 +31,7 @@ function App() {
   if (page === 'admin') return <AdminPanel onBack={() => setPage('home')} />
   if (page === 'profile') return <ProfileScreen onBack={() => setPage('home')} />
   if (page === 'map') return <LevelMap onProfile={() => setPage('profile')} onHome={() => setPage('home')} />
+  if (page === 'legal') return <LegalPage onBack={() => setPage('home')} />
 
   if (page === 'courses') return (
     <CoursesPage
@@ -73,6 +75,7 @@ function App() {
       onProfile={() => setPage('profile')}
       onAdmin={() => setPage('admin')}
       onLeaderboard={() => setPage('leaderboard')}
+      onLegal={() => setPage('legal')}
     />
   )
 }

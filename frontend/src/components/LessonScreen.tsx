@@ -104,7 +104,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
   if (failed) {
     return (
       <motion.div
-        className="fixed inset-0 flex flex-col items-center justify-center"
+        className="fixed inset-0 flex flex-col items-center justify-center z-50"
         style={{ background: '#0f0f1a' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -146,7 +146,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
   if (finished) {
     return (
       <motion.div
-        className="fixed inset-0 flex flex-col items-center justify-center"
+        className="fixed inset-0 flex flex-col items-center justify-center z-50"
         style={{ background: '#0f0f1a' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -187,7 +187,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
 
   return (
     <motion.div
-      className="fixed inset-0 flex flex-col"
+      className="fixed inset-0 flex flex-col z-50"
       style={{ background: '#0f0f1a' }}
       initial={{ x: '100%' }}
       animate={{ x: 0 }}

@@ -12,6 +12,8 @@ interface User {
   completedLessons: number
   role: string
   avatarUrl?: string | null
+  isPremium: boolean
+  premiumUntil?: string | null
 }
 
 interface AuthContextType {
@@ -20,6 +22,7 @@ interface AuthContextType {
   loading: boolean
   login: (token: string, user: User) => void
   logout: () => void
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>(null!)
@@ -58,8 +61,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  async function refreshUser() {
+    const savedToken = localStorage.getItem('token')
+    if (!savedToken) return
+    const userData = await getMe(savedToken)
+    if (userData) setUser(userData)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )
