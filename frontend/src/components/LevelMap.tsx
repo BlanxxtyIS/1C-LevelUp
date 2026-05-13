@@ -5,6 +5,7 @@ import LessonScreen from './LessonScreen'
 import { getLessons, saveProgress, getUserProfile, updateActivity } from '../api'
 import { useAuth } from '../context/AuthContext'
 import AchievementToast from './AchivementToast'
+import StarField from './StarField'
 
 type LessonStatus = 'completed' | 'active' | 'locked'
 
@@ -115,42 +116,20 @@ function LessonNode({ lesson, index, onClick }: { lesson: Lesson; index: number;
 function Connector({ fromIndex, status }: { fromIndex: number; status: LessonStatus }) {
   const isLeft = fromIndex % 2 === 0
   const isCompleted = status === 'completed'
-
-  // Змейка идёт влево если узел слева, вправо если справа
-  const width = 80
-  const height = 80
-
-  // Точки кривой Безье — создают плавный изгиб
   const path = isLeft
     ? `M 32 0 C 32 40, 48 40, 48 80`
     : `M 48 0 C 48 40, 32 40, 32 80`
 
   return (
-    <div className="flex justify-center" style={{ height }}>
-      <svg
-        width={width}
-        height={height}
-        viewBox={`0 0 80 80`}
-        fill="none"
-      >
-        {/* Фоновая линия (серая) */}
+    <div className="flex justify-center" style={{ height: 80 }}>
+      <svg width={80} height={80} viewBox="0 0 80 80" fill="none">
         <motion.path
-          d={path}
-          stroke="#334155"
-          strokeWidth="4"
-          strokeLinecap="round"
-          strokeDasharray="6 6"
-          fill="none"
+          d={path} stroke="#334155" strokeWidth="4"
+          strokeLinecap="round" strokeDasharray="6 6" fill="none"
         />
-
-        {/* Линия прогресса (цветная) поверх */}
         {isCompleted && (
           <motion.path
-            d={path}
-            stroke="#10b981"
-            strokeWidth="4"
-            strokeLinecap="round"
-            fill="none"
+            d={path} stroke="#10b981" strokeWidth="4" strokeLinecap="round" fill="none"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
             transition={{ duration: 0.6, delay: fromIndex * 0.1 }}
@@ -167,7 +146,6 @@ export default function LevelMap({ onProfile, onHome }: Props) {
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
   const [newAchievements, setNewAchievements] = useState<{ key: string; title: string; emoji: string }[]>([])
-
   const { user: authUser, logout } = useAuth()
 
   useEffect(() => {
@@ -188,12 +166,9 @@ export default function LevelMap({ onProfile, onHome }: Props) {
     if (!openLesson || !authUser) return
     await saveProgress(authUser.id, openLesson.id, xpEarned)
     const activityResult = await updateActivity(authUser.id)
-
-    // Показываем новые достижения
     if (activityResult.newAchievements?.length > 0) {
       setNewAchievements(activityResult.newAchievements)
     }
-
     const [lessonsData, profileData] = await Promise.all([
       getLessons(authUser.id),
       getUserProfile(authUser.id)
@@ -214,65 +189,69 @@ export default function LevelMap({ onProfile, onHome }: Props) {
   }
 
   return (
-    <div className="px-6 pt-8 pb-4" style={{ background: '#0f0f1a' }}>
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between">
-          <motion.h1
-            className="text-3xl font-bold text-white cursor-pointer"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={onHome}
-          >
-            1C <span className="text-violet-400">LevelUp</span>
-          </motion.h1>
+    <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
+      <StarField />
+      <div className="relative px-6 pt-8 pb-4" style={{ zIndex: 1 }}>
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between">
+            <motion.h1
+              className="text-3xl font-bold text-white cursor-pointer"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={onHome}
+            >
+              1C <span className="text-violet-400">LevelUp</span>
+            </motion.h1>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onProfile}
-              className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
-              title={authUser?.username}
-            >
-              <User size={16} />
-            </button>
-            <button
-              onClick={logout}
-              className="text-xs text-slate-500 hover:text-red-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-red-900"
-            >
-              Выйти
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onProfile}
+                className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
+                title={authUser?.username}
+              >
+                <User size={16} />
+              </button>
+              <button
+                onClick={logout}
+                className="text-xs text-slate-500 hover:text-red-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-red-900"
+              >
+                Выйти
+              </button>
+            </div>
           </div>
+
+          {user && (
+            <motion.div className="mt-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+              <div className="flex justify-between text-xs text-slate-400 mb-1">
+                <span>Уровень {user.level} · {user.username}</span>
+                <span>{user.totalXp} / {maxXp} XP</span>
+              </div>
+              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full"
+                  animate={{ width: `${Math.min((user.totalXp / maxXp) * 100, 100)}%` }}
+                  transition={{ duration: 0.6 }}
+                />
+              </div>
+              <p className="text-xs text-slate-600 mt-1">Пройдено уроков: {user.completedLessons}</p>
+            </motion.div>
+          )}
         </div>
 
-        {user && (
-          <motion.div className="mt-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-            <div className="flex justify-between text-xs text-slate-400 mb-1">
-              <span>Уровень {user.level} · {user.username}</span>
-              <span>{user.totalXp} / {maxXp} XP</span>
-            </div>
-            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-violet-600 to-violet-400 rounded-full"
-                animate={{ width: `${Math.min((user.totalXp / maxXp) * 100, 100)}%` }}
-                transition={{ duration: 0.6 }}
+        <div className="px-8 py-6 max-w-sm mx-auto">
+          {lessons.map((lesson, index) => (
+            <div key={lesson.id}>
+              <LessonNode
+                lesson={lesson}
+                index={index}
+                onClick={() => lesson.status === 'active' && setOpenLesson(lesson)}
               />
+              {index < lessons.length - 1 &&
+                <Connector fromIndex={index} status={lesson.status} />}
             </div>
-            <p className="text-xs text-slate-600 mt-1">Пройдено уроков: {user.completedLessons}</p>
-          </motion.div>
-        )}
-      </div>
+          ))}
+        </div>
 
-      <div className="px-8 py-6 max-w-sm mx-auto">
-        {lessons.map((lesson, index) => (
-          <div key={lesson.id}>
-            <LessonNode
-              lesson={lesson}
-              index={index}
-              onClick={() => lesson.status === 'active' && setOpenLesson(lesson)}
-            />
-            {index < lessons.length - 1 &&
-              <Connector fromIndex={index} status={lesson.status} />}
-          </div>
-        ))}
       </div>
 
       <AnimatePresence>
@@ -285,6 +264,7 @@ export default function LevelMap({ onProfile, onHome }: Props) {
           />
         )}
       </AnimatePresence>
+
       <AchievementToast
         achievements={newAchievements}
         onDismiss={() => setNewAchievements([])}
