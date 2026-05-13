@@ -12,6 +12,7 @@ public static class LessonEndpoints
         app.MapGet("/lessons/{userId}", async (int userId, AppDbContext db) =>
         {
             var lessons = await db.Lessons
+                .Where(l => l.TopicId == null)
                 .OrderBy(l => l.Order)
                 .ToListAsync();
 

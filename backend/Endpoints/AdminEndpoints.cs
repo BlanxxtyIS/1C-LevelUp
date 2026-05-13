@@ -14,6 +14,7 @@ public static class AdminEndpoints
         admin.MapGet("/lessons", async (AppDbContext db) =>
        {
            var lessons = await db.Lessons
+               .Where(l => l.TopicId == null)
                .OrderBy(l => l.Order)
                .Select(l => new
                {
