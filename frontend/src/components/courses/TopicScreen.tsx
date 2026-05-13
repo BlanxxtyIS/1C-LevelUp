@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Clock, Zap, Loader2, CheckCircle } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
-import { getTopicLessons, saveTopicLessonProgress, getCompletedLessons, updateActivity} from '../../api'
+import { getTopicLessons, saveTopicLessonProgress, getCompletedLessons, updateActivity } from '../../api'
+import AchievementToast from '../AchivementToast'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
 
@@ -39,6 +40,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
   const [completedIds, setCompletedIds] = useState<number[]>([])
   const [saving, setSaving] = useState(false)
   const [allDone, setAllDone] = useState(false)
+  const [newAchievements, setNewAchievements] = useState<{ key: string; title: string; emoji: string }[]>([])
 
   useEffect(() => {
     async function init() {
@@ -67,12 +69,19 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
     for (const lesson of unfinished) {
       await saveTopicLessonProgress(user.id, lesson.id, lesson.xpReward)
     }
-    await updateActivity(user.id)
+    const activityResult = await updateActivity(user.id)
+    if (activityResult.newAchievements?.length > 0) {
+      setNewAchievements(activityResult.newAchievements)
+    }
 
     const updated = await getCompletedLessons(user.id)
     setCompletedIds(updated)
     setSaving(false)
-    onBack()
+
+    // Если нет новых достижений — сразу назад
+    if (!activityResult.newAchievements?.length) {
+      onBack()
+    }
   }
 
   if (loading) return (
@@ -90,32 +99,32 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
       <StarField />
 
       {/* Header */}
-<div className="px-6 pt-8 pb-2">
-  <div className="max-w-2xl mx-auto flex items-center gap-3">
-    <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors shrink-0">
-      <ArrowLeft size={20} />
-    </button>
-    <div className="flex-1 min-w-0">
-      <p className="text-slate-500 text-xs">{course.emoji} {course.title}</p>
-      <h1 className="text-xl font-bold text-white truncate">{topic.title}</h1>
-    </div>
-    <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0">
-      <span className="flex items-center gap-1">
-        <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
-      </span>
-      {totalXp > 0 && (
-        <span className="flex items-center gap-1">
-          <Zap size={12} className="text-yellow-400" /> +{totalXp} XP
-        </span>
-      )}
-      {allDone && (
-        <span className="flex items-center gap-1 text-emerald-400">
-          <CheckCircle size={12} /> Пройдено
-        </span>
-      )}
-    </div>
-  </div>
-</div>
+      <div className="px-6 pt-8 pb-2">
+        <div className="max-w-2xl mx-auto flex items-center gap-3">
+          <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors shrink-0">
+            <ArrowLeft size={20} />
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-slate-500 text-xs">{course.emoji} {course.title}</p>
+            <h1 className="text-xl font-bold text-white truncate">{topic.title}</h1>
+          </div>
+          <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0">
+            <span className="flex items-center gap-1">
+              <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
+            </span>
+            {totalXp > 0 && (
+              <span className="flex items-center gap-1">
+                <Zap size={12} className="text-yellow-400" /> +{totalXp} XP
+              </span>
+            )}
+            {allDone && (
+              <span className="flex items-center gap-1 text-emerald-400">
+                <CheckCircle size={12} /> Пройдено
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Content */}
       <div className="relative px-5 py-6 max-w-2xl mx-auto pb-24" style={{ zIndex: 1 }}>
@@ -186,6 +195,10 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
           </button>
         </motion.div>
       </div>
+      <AchievementToast
+        achievements={newAchievements}
+        onDismiss={() => { setNewAchievements([]); onBack() }}
+      />
     </div>
   )
 }

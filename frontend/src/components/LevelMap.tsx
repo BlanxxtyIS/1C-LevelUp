@@ -4,6 +4,7 @@ import { Lock, Star, CheckCircle, Play, Loader2, User } from 'lucide-react'
 import LessonScreen from './LessonScreen'
 import { getLessons, saveProgress, getUserProfile, updateActivity } from '../api'
 import { useAuth } from '../context/AuthContext'
+import AchievementToast from './AchivementToast'
 
 type LessonStatus = 'completed' | 'active' | 'locked'
 
@@ -160,11 +161,12 @@ function Connector({ fromIndex, status }: { fromIndex: number; status: LessonSta
   )
 }
 
-export default function LevelMap({onProfile, onHome }: Props) {
+export default function LevelMap({ onProfile, onHome }: Props) {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [user, setUser] = useState<UserProfile | null>(null)
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
+  const [newAchievements, setNewAchievements] = useState<{ key: string; title: string; emoji: string }[]>([])
 
   const { user: authUser, logout } = useAuth()
 
@@ -185,8 +187,13 @@ export default function LevelMap({onProfile, onHome }: Props) {
   async function handleComplete(xpEarned: number) {
     if (!openLesson || !authUser) return
     await saveProgress(authUser.id, openLesson.id, xpEarned)
-    await updateActivity(authUser.id)
-    
+    const activityResult = await updateActivity(authUser.id)
+
+    // Показываем новые достижения
+    if (activityResult.newAchievements?.length > 0) {
+      setNewAchievements(activityResult.newAchievements)
+    }
+
     const [lessonsData, profileData] = await Promise.all([
       getLessons(authUser.id),
       getUserProfile(authUser.id)
@@ -278,6 +285,10 @@ export default function LevelMap({onProfile, onHome }: Props) {
           />
         )}
       </AnimatePresence>
+      <AchievementToast
+        achievements={newAchievements}
+        onDismiss={() => setNewAchievements([])}
+      />
     </div>
   )
 }

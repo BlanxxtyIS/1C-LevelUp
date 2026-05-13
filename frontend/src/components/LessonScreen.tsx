@@ -27,6 +27,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
   const [lives, setLives] = useState(3)
   const [xpEarned, setXpEarned] = useState(0)
   const [finished, setFinished] = useState(false)
+  const [failed, setFailed] = useState(false)
   const [_mood, setMood] = useState<'idle' | 'correct' | 'wrong' | 'celebrate'>('idle')
 
   useEffect(() => {
@@ -35,6 +36,17 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
       setLoading(false)
     })
   }, [lessonId])
+
+  function reset() {
+    setCurrent(0)
+    setSelected(null)
+    setAnswerState('idle')
+    setLives(3)
+    setXpEarned(0)
+    setFinished(false)
+    setFailed(false)
+    setMood('idle')
+  }
 
   if (loading) {
     return (
@@ -52,9 +64,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
   const question = questions[current]
   const progress = (current / questions.length) * 100
 
-  if (!question) {
-    return null
-  }
+  if (!question && !finished && !failed) return null
 
   function handleAnswer(index: number) {
     if (answerState !== 'idle') return
@@ -66,11 +76,19 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
     } else {
       setAnswerState('wrong')
       setMood('wrong')
-      setLives(p => p - 1)
+      const newLives = lives - 1
+      setLives(newLives)
+      if (newLives === 0) {
+        // Показываем объяснение и потом переходим к экрану провала
+      }
     }
   }
 
   function handleNext() {
+    if (lives === 0) {
+      setFailed(true)
+      return
+    }
     setMood('idle')
     if (current + 1 >= questions.length) {
       setFinished(true)
@@ -82,6 +100,49 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
     }
   }
 
+  // Экран провала
+  if (failed) {
+    return (
+      <motion.div
+        className="fixed inset-0 flex flex-col items-center justify-center"
+        style={{ background: '#0f0f1a' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', bounce: 0.4 }}
+          className="text-center px-6"
+        >
+          <div className="text-7xl mb-6">💔</div>
+          <h2 className="text-3xl font-bold text-white mb-2">Жизни закончились!</h2>
+          <p className="text-slate-400 mb-10">Не сдавайся — попробуй ещё раз!</p>
+
+          <div className="flex flex-col gap-3 max-w-xs mx-auto">
+            <motion.button
+              className="w-full bg-violet-600 hover:bg-violet-500 text-white font-bold py-4 rounded-2xl text-lg transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={reset}
+            >
+              🔄 Попробовать снова
+            </motion.button>
+            <motion.button
+              className="w-full border border-slate-700 text-slate-400 hover:text-white font-bold py-4 rounded-2xl text-lg transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onClose}
+            >
+              Выйти
+            </motion.button>
+          </div>
+        </motion.div>
+      </motion.div>
+    )
+  }
+
+  // Экран победы
   if (finished) {
     return (
       <motion.div
@@ -147,11 +208,16 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
         </div>
         <div className="flex gap-1">
           {[...Array(3)].map((_, i) => (
-            <Heart
+            <motion.div
               key={i}
-              size={20}
-              className={i < lives ? 'text-red-500 fill-red-500' : 'text-slate-700'}
-            />
+              animate={i === lives && answerState === 'wrong' ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart
+                size={20}
+                className={i < lives ? 'text-red-500 fill-red-500' : 'text-slate-700'}
+              />
+            </motion.div>
           ))}
         </div>
       </div>
@@ -214,7 +280,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className={`font-bold text-lg mb-1 ${answerState === 'correct' ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {answerState === 'correct' ? '✓ Правильно!' : '✗ Неверно'}
+                  {answerState === 'correct' ? '✓ Правильно!' : lives === 0 ? '💔 Последняя жизнь!' : '✗ Неверно'}
                 </p>
                 <p className="text-slate-300 text-sm">{question.explanation}</p>
                 {answerState === 'correct' && (
@@ -234,7 +300,7 @@ export default function LessonScreen({ lessonId, xpReward, onClose, onComplete }
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
               >
-                Далее
+                {lives === 0 && answerState === 'wrong' ? 'Завершить' : 'Далее'}
               </motion.button>
             </div>
           </motion.div>
