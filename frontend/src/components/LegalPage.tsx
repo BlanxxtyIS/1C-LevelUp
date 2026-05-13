@@ -41,7 +41,7 @@ export default function LegalPage({ onBack }: Props) {
             </div>
           </div>
         </motion.div>
-        Реквизиты
+        {/* Реквизиты
         <motion.div
           className="rounded-2xl p-6 border border-slate-800 mb-6"
           style={{ background: '#1a1a2e' }}
@@ -71,7 +71,7 @@ export default function LegalPage({ onBack }: Props) {
               <span className="text-white">+7 927 423-25-05</span>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Описание услуги */}
         {/* <motion.div
