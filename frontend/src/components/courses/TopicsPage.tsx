@@ -5,7 +5,6 @@ import { getChapterTopics, getChapterProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
 import PremiumGlow from '../PremiumGlow'  
-import PremiumBadge from '../PremiumBadge'
 
 interface Topic {
   id: number
