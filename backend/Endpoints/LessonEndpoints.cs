@@ -202,6 +202,23 @@ public static class LessonEndpoints
             await db.SaveChangesAsync();
             return Results.Ok(new { user.Id, user.AvatarUrl });
         });
+
+        //Тестовый период
+        app.MapPost("/users/{userId}/trial", async (int userId, AppDbContext db) =>
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return Results.NotFound();
+
+            // Даём триал только если ещё не было премиума
+            if (user.IsPremium && user.PremiumUntil > DateTime.UtcNow)
+                return Results.BadRequest(new { error = "Подписка уже активна" });
+
+            user.IsPremium = true;
+            user.PremiumUntil = DateTime.UtcNow.AddDays(3);
+            await db.SaveChangesAsync();
+
+            return Results.Ok(new { user.IsPremium, user.PremiumUntil });
+        });
     }
 }
 

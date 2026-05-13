@@ -4,6 +4,8 @@ import { ArrowLeft, BookOpen, ChevronRight, Loader2, CheckCircle } from 'lucide-
 import { getCourses, getCourseProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
+import PremiumGlow from '../PremiumGlow' 
+import PremiumBadge from '../PremiumBadge'
 
 interface Course {
   id: number
@@ -58,6 +60,7 @@ export default function CoursesPage({ onBack, onCourse }: Props) {
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow /> 
       <div className="relative px-6 pt-8 pb-4" style={{ zIndex: 1 }}>
         <div className="max-w-2xl mx-auto">
 
@@ -68,6 +71,7 @@ export default function CoursesPage({ onBack, onCourse }: Props) {
             <h1 className="text-2xl font-bold text-white">
               Курсы <span className="text-violet-400">1C LevelUp</span>
             </h1>
+            <PremiumBadge />
           </div>
           <p className="text-slate-500 text-sm mb-8 ml-9">Выбери курс для изучения</p>
 

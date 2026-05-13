@@ -4,6 +4,8 @@ import { ArrowLeft, ChevronRight, Loader2, FileText, CheckCircle } from 'lucide-
 import { getChapterTopics, getChapterProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
+import PremiumGlow from '../PremiumGlow'  
+import PremiumBadge from '../PremiumBadge'
 
 interface Topic {
   id: number
@@ -71,6 +73,7 @@ export default function TopicsPage({ course, chapter, onBack, onTopic }: Props) 
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow />
       <div className="relative px-6 pt-8 pb-4" style={{ zIndex: 1 }}>
         <div className="max-w-2xl mx-auto">
 

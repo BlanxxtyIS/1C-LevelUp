@@ -297,3 +297,11 @@ export async function updateAvatar(id: number, avatarUrl: string | null) {
   })
   return res.json()
 }
+
+export async function activateTrial(userId: number) {
+  const res = await fetch(`${BASE_URL}/users/${userId}/trial`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  return res.json()
+}

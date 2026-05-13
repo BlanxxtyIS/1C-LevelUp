@@ -6,6 +6,8 @@ import { getTopicLessons, saveTopicLessonProgress, getCompletedLessons, updateAc
 import AchievementToast from '../AchivementToast'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
+import PremiumGlow from '../PremiumGlow'
+import PremiumBadge from '../PremiumBadge'
 
 interface Topic {
   id: number
@@ -34,7 +36,7 @@ interface Props {
 }
 
 export default function TopicScreen({ topic, course, onBack }: Props) {
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
   const [completedIds, setCompletedIds] = useState<number[]>([])
@@ -80,6 +82,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
 
     // Если нет новых достижений — сразу назад
     if (!activityResult.newAchievements?.length) {
+      await refreshUser()
       onBack()
     }
   }
@@ -97,6 +100,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow />
 
       {/* Header */}
       <div className="px-6 pt-8 pb-2">
@@ -104,10 +108,12 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
           <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors shrink-0">
             <ArrowLeft size={20} />
           </button>
+
           <div className="flex-1 min-w-0">
             <p className="text-slate-500 text-xs">{course.emoji} {course.title}</p>
             <h1 className="text-xl font-bold text-white truncate">{topic.title}</h1>
           </div>
+          
           <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0">
             <span className="flex items-center gap-1">
               <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
@@ -197,7 +203,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
       </div>
       <AchievementToast
         achievements={newAchievements}
-        onDismiss={() => { setNewAchievements([]); onBack() }}
+        onDismiss={async () => { setNewAchievements([]); await refreshUser(); onBack() }}
       />
     </div>
   )

@@ -18,7 +18,29 @@ export default function LegalPage({ onBack }: Props) {
           </button>
           <h1 className="text-xl font-bold text-white">Правовая информация</h1>
         </div>
-
+        {/* Дисклеймер */}
+        <motion.div
+          className="rounded-2xl p-6 border border-yellow-800/30 mb-6"
+          style={{ background: 'rgba(234,179,8,0.05)' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-2xl shrink-0">⚠️</span>
+            <div>
+              <h2 className="text-yellow-400 font-bold mb-2">Важное уведомление</h2>
+              <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                Платформа <strong className="text-white">1C LevelUp</strong> является независимым образовательным проектом и <strong className="text-white">не имеет никакого отношения</strong> к фирме «1С» и её официальным продуктам.
+              </p>
+              <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                Мы не претендуем на использование технологий, торговых марок или интеллектуальной собственности фирмы «1С». Название используется исключительно в образовательном контексте для обозначения предметной области обучения.
+              </p>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Мы — два студента, большие поклонники платформы 1С:Предприятие и фирмы «1С». Этот проект создан из любви к продукту и желания помочь другим изучить его через наш собственный опыт, ошибки и набитые шишки. Мы искренне уважаем работу команды «1С» и надеемся, что наша платформа поможет большему числу людей познакомиться с их замечательными продуктами. 🙌
+              </p>
+            </div>
+          </div>
+        </motion.div>
         {/* Реквизиты */}
         <motion.div
           className="rounded-2xl p-6 border border-slate-800 mb-6"

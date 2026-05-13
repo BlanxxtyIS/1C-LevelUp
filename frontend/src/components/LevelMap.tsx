@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Lock, Star, CheckCircle, Play, Loader2, User } from 'lucide-react'
+import { ArrowLeft, Lock, Star, CheckCircle, Play, Loader2 } from 'lucide-react'
 import LessonScreen from './LessonScreen'
 import { getLessons, saveProgress, getUserProfile, updateActivity } from '../api'
 import { useAuth } from '../context/AuthContext'
 import AchievementToast from './AchivementToast'
 import StarField from './StarField'
+import Avatar from './Avatar'
+import PremiumGlow from './PremiumGlow'
+import PremiumBadge from './PremiumBadge'
 
 type LessonStatus = 'completed' | 'active' | 'locked'
 
@@ -146,7 +149,7 @@ export default function LevelMap({ onProfile, onHome }: Props) {
   const [openLesson, setOpenLesson] = useState<Lesson | null>(null)
   const [loading, setLoading] = useState(true)
   const [newAchievements, setNewAchievements] = useState<{ key: string; title: string; emoji: string }[]>([])
-  const { user: authUser, logout } = useAuth()
+  const { user: authUser, logout, refreshUser } = useAuth()
 
   useEffect(() => {
     if (!authUser) return
@@ -176,6 +179,7 @@ export default function LevelMap({ onProfile, onHome }: Props) {
     setLessons(lessonsData)
     setUser(profileData)
     setOpenLesson(null)
+    await refreshUser()
   }
 
   const maxXp = user ? user.level * 50 : 50
@@ -191,31 +195,48 @@ export default function LevelMap({ onProfile, onHome }: Props) {
   return (
     <div className="min-h-screen relative" style={{ background: '#0f0f1a' }}>
       <StarField />
+      <PremiumGlow />
       <div className="relative px-6 pt-8 pb-4" style={{ zIndex: 1 }}>
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between">
-            <motion.h1
-              className="text-3xl font-bold text-white cursor-pointer"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={onHome}
-            >
-              1C <span className="text-violet-400">LevelUp</span>
-            </motion.h1>
+            <div className="flex items-center gap-3">
+              <button onClick={async () => { await refreshUser(); onHome() }} className="text-slate-400 hover:text-white transition-colors">
+                <ArrowLeft size={20} />
+              </button>
+              <motion.h1
+                className="text-3xl font-bold text-white cursor-pointer"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={onHome}
+              >
+                1C <span className="text-violet-400">LevelUp</span>
+              </motion.h1>
+              <PremiumBadge />
+            </div>
 
             <div className="flex items-center gap-2">
-              <button
-                onClick={onProfile}
-                className="w-8 h-8 rounded-full bg-violet-600/20 border border-violet-800 flex items-center justify-center text-violet-400 hover:bg-violet-600/40 transition-colors"
-                title={authUser?.username}
-              >
-                <User size={16} />
-              </button>
-              <button
-                onClick={logout}
-                className="text-xs text-slate-500 hover:text-red-400 transition-colors px-3 py-1 rounded-lg border border-slate-800 hover:border-red-900"
-              >
-                Выйти
+              <button onClick={onProfile} className="relative">
+                {authUser?.isPremium ? (
+                  <motion.div
+                    className="rounded-full p-0.5"
+                    animate={{ boxShadow: ['0 0 8px rgba(168,85,247,0.8)', '0 0 20px rgba(168,85,247,1)', '0 0 8px rgba(168,85,247,0.8)'] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7, #ec4899)' }}
+                  >
+                    <div className="rounded-full overflow-hidden" style={{ width: 36, height: 36 }}>
+                      <Avatar name={authUser?.name ?? 'U'} avatarUrl={authUser?.avatarUrl} size={36} />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <div className="w-9 h-9 rounded-full overflow-hidden border border-violet-800 hover:border-violet-600 transition-colors">
+                    <Avatar name={authUser?.name ?? 'U'} avatarUrl={authUser?.avatarUrl} size={36} />
+                  </div>
+                )}
+                {authUser?.isPremium && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs leading-none">
+                    👑
+                  </div>
+                )}
               </button>
             </div>
           </div>
