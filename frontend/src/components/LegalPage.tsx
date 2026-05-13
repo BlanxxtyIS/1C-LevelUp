@@ -41,7 +41,7 @@ export default function LegalPage({ onBack }: Props) {
             </div>
           </div>
         </motion.div>
-        {/* Реквизиты */}
+        Реквизиты
         <motion.div
           className="rounded-2xl p-6 border border-slate-800 mb-6"
           style={{ background: '#1a1a2e' }}
@@ -74,7 +74,7 @@ export default function LegalPage({ onBack }: Props) {
         </motion.div>
 
         {/* Описание услуги */}
-        <motion.div
+        {/* <motion.div
           className="rounded-2xl p-6 border border-slate-800 mb-6"
           style={{ background: '#1a1a2e' }}
           initial={{ opacity: 0, y: 20 }}
@@ -99,10 +99,10 @@ export default function LegalPage({ onBack }: Props) {
               <p className="text-slate-300 text-sm"><strong className="text-white">Способ получения:</strong> доступ предоставляется немедленно после оплаты в личном кабинете на сайте.</p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Оферта */}
-        <motion.div
+        {/* <motion.div
           className="rounded-2xl p-6 border border-slate-800 mb-6"
           style={{ background: '#1a1a2e' }}
           initial={{ opacity: 0, y: 20 }}
@@ -144,9 +144,9 @@ export default function LegalPage({ onBack }: Props) {
               <p>По всем вопросам: mvtvr21@mail.ru, +7 927 423-25-05</p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
 
-        {/* Политика конфиденциальности */}
+        {/* Политика конфиденциальности
         <motion.div
           className="rounded-2xl p-6 border border-slate-800"
           style={{ background: '#1a1a2e' }}
@@ -169,7 +169,7 @@ export default function LegalPage({ onBack }: Props) {
               <p>По запросу на mvtvr21@mail.ru ваши данные будут удалены в течение 7 рабочих дней.</p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
 
       </div>
     </div>
