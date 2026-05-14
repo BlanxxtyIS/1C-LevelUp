@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, ChevronRight, Loader2, FileText, CheckCircle } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Loader2, FileText, CheckCircle, Lock } from 'lucide-react'
 import { getChapterTopics, getChapterProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
-import PremiumGlow from '../PremiumGlow'  
+import PremiumGlow from '../PremiumGlow'
 
-//Sanya
 interface Topic {
   id: number
   title: string
@@ -62,6 +61,13 @@ export default function TopicsPage({ course, chapter, onBack, onTopic }: Props) 
     return progress.find(p => p.topicId === topicId)
   }
 
+  function isTopicLocked(index: number): boolean {
+    if (index === 0) return false
+    const prevTopic = topics[index - 1]
+    const prevProgress = getTopicProgress(prevTopic.id)
+    return !(prevProgress?.isCompleted ?? false)
+  }
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: '#0f0f1a' }}>
       <Loader2 className="text-violet-400 animate-spin" size={40} />
@@ -111,40 +117,60 @@ export default function TopicsPage({ course, chapter, onBack, onTopic }: Props) 
             {topics.map((topic, index) => {
               const tp = getTopicProgress(topic.id)
               const isCompleted = tp?.isCompleted ?? false
+              const isLocked = isTopicLocked(index)
               const hasProgress = (tp?.completedLessons ?? 0) > 0 && !isCompleted
 
               return (
                 <motion.button
                   key={topic.id}
-                  onClick={() => onTopic(topic)}
+                  onClick={() => !isLocked && onTopic(topic)}
+                  disabled={isLocked}
                   className={`w-full text-left rounded-2xl border transition-colors p-4 ${
-                    isCompleted
+                    isLocked
+                      ? 'border-slate-800/50 opacity-50 cursor-not-allowed'
+                      : isCompleted
                       ? 'border-emerald-800/50 hover:border-emerald-600'
                       : 'border-slate-800 hover:border-violet-700'
                   }`}
-                  style={{ background: isCompleted ? 'rgba(16,185,129,0.05)' : '#1a1a2e' }}
+                  style={{
+                    background: isLocked
+                      ? '#151525'
+                      : isCompleted
+                      ? 'rgba(16,185,129,0.05)'
+                      : '#1a1a2e'
+                  }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.08 }}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                  whileHover={!isLocked ? { scale: 1.01 } : {}}
+                  whileTap={!isLocked ? { scale: 0.99 } : {}}
                 >
                   <div className="flex items-center gap-4">
                     <div
                       className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
                       style={{
-                        background: isCompleted ? 'rgba(16,185,129,0.2)' : `${course.color}22`,
-                        color: isCompleted ? '#10b981' : course.color
+                        background: isLocked
+                          ? 'rgba(51,65,85,0.3)'
+                          : isCompleted
+                          ? 'rgba(16,185,129,0.2)'
+                          : `${course.color}22`,
+                        color: isLocked
+                          ? '#475569'
+                          : isCompleted
+                          ? '#10b981'
+                          : course.color
                       }}
                     >
                       {isCompleted ? '✓' : topic.order}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-semibold text-sm ${isCompleted ? 'text-emerald-400' : 'text-white'}`}>
+                      <p className={`font-semibold text-sm ${
+                        isLocked ? 'text-slate-600' : isCompleted ? 'text-emerald-400' : 'text-white'
+                      }`}>
                         {topic.title}
                       </p>
                       <p className="text-slate-500 text-xs mt-0.5">{topic.description}</p>
-                      {topic.lessonCount > 0 && (
+                      {topic.lessonCount > 0 && !isLocked && (
                         <div className="flex items-center gap-2 mt-1.5">
                           <div className="flex items-center gap-1">
                             <FileText size={10} className="text-slate-600" />
@@ -157,8 +183,15 @@ export default function TopicsPage({ course, chapter, onBack, onTopic }: Props) 
                           )}
                         </div>
                       )}
+                      {isLocked && (
+                        <p className="text-xs text-slate-600 mt-1">
+                          Пройди предыдущую тему
+                        </p>
+                      )}
                     </div>
-                    {isCompleted
+                    {isLocked
+                      ? <Lock size={16} className="text-slate-700 shrink-0" />
+                      : isCompleted
                       ? <CheckCircle size={18} className="text-emerald-500 shrink-0" />
                       : <ChevronRight size={18} className="text-slate-600 shrink-0" />
                     }

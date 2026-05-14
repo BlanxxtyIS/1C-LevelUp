@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext'
 import StarField from './StarField'
 import PremiumModal from './PremiumModal'
 import Avatar from './Avatar'
+import PremiumGlow from './PremiumGlow' 
+import PremiumBadge from './PremiumBadge'
 
 interface Props {
   onHome: () => void
@@ -36,7 +38,7 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
   return (
     <div className="min-h-screen px-6 py-8 relative overflow-hidden" style={{ background: '#0f0f1a' }}>
       <StarField />
-
+      <PremiumGlow />
       {/* Премиум фоновое свечение */}
       {isPremium && (
         <motion.div
@@ -60,16 +62,7 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
               <h1 className="text-3xl font-bold text-white cursor-pointer" onClick={onHome}>
                 1C <span className="text-violet-400">LevelUp</span>
               </h1>
-              {isPremium && (
-                <motion.span
-                  className="text-xs font-bold px-2 py-0.5 rounded-full"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: 'white' }}
-                  animate={{ boxShadow: ['0 0 8px rgba(168,85,247,0.6)', '0 0 20px rgba(168,85,247,0.9)', '0 0 8px rgba(168,85,247,0.6)'] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  PRO ✨
-                </motion.span>
-              )}
+              <PremiumBadge onClick={() => setShowPremium(true)} />
             </div>
           </motion.div>
 
