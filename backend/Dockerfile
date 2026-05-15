@@ -1,15 +1,14 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+
 WORKDIR /app
 EXPOSE 8080
 
-# Устанавливаем OneScript для Linux
-RUN apt-get update && apt-get install -y wget unzip && \
-    wget https://github.com/EvilBeaver/OneScript/releases/download/v2.0.0/OneScript-2.0.0-linux-x64.zip -O /tmp/oscript.zip && \
-    mkdir -p /opt/oscript && \
-    unzip /tmp/oscript.zip -d /opt/oscript && \
-    chmod +x /opt/oscript/oscript && \
-    ln -s /opt/oscript/oscript /usr/local/bin/oscript && \
-    rm /tmp/oscript.zip && \
+RUN apt-get update && \
+    apt-get install -y wget gnupg && \
+    wget https://oscript.io/downloads/linux/deb/public.key -O - | apt-key add - && \
+    echo "deb https://download.opensuse.org/repositories/home:/EvilBeaver:/oscript/Debian_12/ /" > /etc/apt/sources.list.d/oscript.list && \
+    apt-get update && \
+    apt-get install -y onescript && \
     apt-get clean
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
