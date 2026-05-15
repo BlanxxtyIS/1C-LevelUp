@@ -8,8 +8,8 @@ RUN apt-get update && \
     wget https://github.com/EvilBeaver/OneScript/releases/download/v2.0.1/OneScript-2.0.1-linux-x64.zip -O /tmp/oscript.zip && \
     mkdir -p /opt/oscript && \
     unzip /tmp/oscript.zip -d /opt/oscript && \
-    chmod +x /opt/oscript/oscript && \
-    ln -s /opt/oscript/oscript /usr/local/bin/oscript && \
+    chmod +x /opt/oscript/bin/oscript && \
+    ln -s /opt/oscript/bin/oscript /usr/local/bin/oscript
     oscript --version
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
