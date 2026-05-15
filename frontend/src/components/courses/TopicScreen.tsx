@@ -7,6 +7,8 @@ import AchievementToast from '../AchivementToast'
 import { useAuth } from '../../context/AuthContext'
 import StarField from '../StarField'
 import PremiumGlow from '../PremiumGlow'
+import CodeEditor from '../CodeEditor'
+//import { Components } from 'react-markdown'
 
 interface Topic {
   id: number
@@ -42,6 +44,37 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
   const [saving, setSaving] = useState(false)
   const [allDone, setAllDone] = useState(false)
   const [newAchievements, setNewAchievements] = useState<{ key: string; title: string; emoji: string }[]>([])
+  // Кастомные компоненты для react-markdown
+  const markdownComponents = {
+    pre({ children }: any) {
+      return <>{children}</>
+    },
+    code({ node, className, children, ...props }: any) {
+      const isBlock = className?.includes('language-')
+      const isBsl = className?.includes('language-bsl') || className?.includes('language-1c')
+
+      if (isBlock && isBsl) {
+        return <CodeEditor initialCode={String(children).trim()} />
+      }
+
+      if (isBlock) {
+        return (
+          <pre className="bg-slate-800 border border-slate-700 rounded-xl p-4 overflow-x-auto">
+            <code className="text-slate-300 text-sm font-mono">{children}</code>
+          </pre>
+        )
+      }
+
+      return (
+        <code
+          className="text-violet-300 bg-slate-800 px-1.5 py-0.5 rounded text-sm font-mono"
+          {...props}
+        >
+          {children}
+        </code>
+      )
+    }
+  }
 
   useEffect(() => {
     async function init() {
@@ -112,7 +145,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
             <p className="text-slate-500 text-xs">{course.emoji} {course.title}</p>
             <h1 className="text-xl font-bold text-white truncate">{topic.title}</h1>
           </div>
-          
+
           <div className="flex items-center gap-3 text-xs text-slate-500 shrink-0">
             <span className="flex items-center gap-1">
               <Clock size={12} /> {lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 5), 0)} мин
@@ -175,7 +208,9 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
                   prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-700
                   prose-blockquote:border-violet-500 prose-blockquote:text-slate-400
                 ">
-                  <ReactMarkdown>{lesson.content || '*Контент не добавлен*'}</ReactMarkdown>
+                  <ReactMarkdown components={markdownComponents}>
+                    {lesson.content || '*Контент не добавлен*'}
+                  </ReactMarkdown>
                 </div>
               </motion.div>
             )

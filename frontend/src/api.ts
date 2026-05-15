@@ -305,3 +305,12 @@ export async function activateTrial(userId: number) {
   })
   return res.json()
 }
+
+export async function executeCode(code: string) {
+  const res = await fetch(`${BASE_URL}/execute`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code })
+  })
+  return res.json()
+}

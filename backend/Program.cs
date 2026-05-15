@@ -7,6 +7,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
@@ -69,6 +71,7 @@ app.MapAdminEndpoints();
 app.MapAuthEndpoints();
 app.MapCourseEndpoints();
 app.MapStreakEndpoints();
+app.MapExecuteEndpoints();
 
 app.Run();
 

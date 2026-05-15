@@ -39,6 +39,7 @@ export default function HomePage({ onHome, onLevelMap, onCourses, onProfile, onA
     <div className="min-h-screen px-6 py-8 relative overflow-hidden" style={{ background: '#0f0f1a' }}>
       <StarField />
       <PremiumGlow />
+      
       {/* Премиум фоновое свечение */}
       {isPremium && (
         <motion.div

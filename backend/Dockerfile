@@ -2,6 +2,15 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
 
+# Устанавливаем OneScript
+RUN apt-get update && apt-get install -y \
+    wget \
+    dpkg \
+    && wget https://github.com/EvilBeaver/OneScript/releases/download/v1.9.0/onescript-engine_1.9.0_amd64.deb \
+    && dpkg -i onescript-engine_1.9.0_amd64.deb \
+    && rm onescript-engine_1.9.0_amd64.deb \
+    && apt-get clean
+
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["backend.csproj", "."]
