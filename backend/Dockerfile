@@ -4,7 +4,7 @@ EXPOSE 8080
 
 # Устанавливаем OneScript для Linux
 RUN apt-get update && apt-get install -y wget unzip && \
-    wget https://oscript.io/downloads/archive/2_0_2/OneScript-2.0.2-linux-x64.zip -O /tmp/oscript.zip && \
+    wget https://github.com/EvilBeaver/OneScript/releases/download/v2.0.0/OneScript-2.0.0-linux-x64.zip -O /tmp/oscript.zip && \
     mkdir -p /opt/oscript && \
     unzip /tmp/oscript.zip -d /opt/oscript && \
     chmod +x /opt/oscript/oscript && \
