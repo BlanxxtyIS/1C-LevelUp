@@ -6,9 +6,9 @@ EXPOSE 8080
 RUN apt-get update && apt-get install -y \
     wget \
     dpkg \
-    && wget https://github.com/EvilBeaver/OneScript/releases/download/v1.9.0/onescript-engine_1.9.0_amd64.deb \
-    && dpkg -i onescript-engine_1.9.0_amd64.deb \
-    && rm onescript-engine_1.9.0_amd64.deb \
+    && wget https://github.com/EvilBeaver/OneScript/releases/download/v2.0.2/onescript-engine_2.0.2_amd64.deb \
+    && dpkg -i onescript-engine_2.0.2_amd64.deb \
+    && rm onescript-engine_2.0.2_amd64.deb \
     && apt-get clean
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
