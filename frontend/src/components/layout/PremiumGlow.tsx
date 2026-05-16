@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 
 export default function PremiumGlow() {
   const { user } = useAuth()

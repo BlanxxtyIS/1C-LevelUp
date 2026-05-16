@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, ChevronRight, Loader2, FileText, CheckCircle, Lock } from 'lucide-react'
 import { getChapterTopics, getChapterProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
-import StarField from '../StarField'
-import PremiumGlow from '../PremiumGlow'
+import StarField from '../layout/StarField'
+import PremiumGlow from '../layout/PremiumGlow'
 
 interface Topic {
   id: number

@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Backend.Endpoints;
 
+//Регистрация, логин
 public static class AuthEndpoint
 {
     public static void MapAuthEndpoints(this WebApplication app)

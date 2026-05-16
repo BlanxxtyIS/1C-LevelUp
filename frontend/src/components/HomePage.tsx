@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Map, BookOpen, Trophy, LogOut } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import StarField from './StarField'
+import StarField from '../components/layout/StarField'
 import PremiumModal from './PremiumModal'
-import Avatar from './Avatar'
-import PremiumGlow from './PremiumGlow' 
-import PremiumBadge from './PremiumBadge'
+import Avatar from './layout/Avatar'
+import PremiumGlow from './layout/PremiumGlow' 
+import PremiumBadge from './layout/PremiumBadge'
 
 interface Props {
   onHome: () => void

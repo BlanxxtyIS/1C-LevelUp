@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Heart, Zap, Loader2 } from 'lucide-react'
-import { getLessonQuestions } from '../api'
+import { getLessonQuestions } from '../../api'
 
 interface Question {
   id: number

@@ -3,10 +3,10 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Loader2, Zap, BookOpen } from 'lucide-react'
 import { getLeaderboard } from '../api'
 import { useAuth } from '../context/AuthContext'
-import StarField from './StarField'
-import Avatar from './Avatar'
-import PremiumGlow from './PremiumGlow' 
-import PremiumBadge from './PremiumBadge'
+import StarField from '../components/layout/StarField'
+import Avatar from './layout/Avatar'
+import PremiumGlow from './layout/PremiumGlow' 
+import PremiumBadge from './layout/PremiumBadge'
 
 interface Leader {
   id: number
