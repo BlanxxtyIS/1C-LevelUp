@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext'
 import StarField from '../layout/StarField'
 import PremiumGlow from '../layout/PremiumGlow'
 import CodeEditor from '../game/CodeEditor'
+import remarkGfm from 'remark-gfm'
 //import { Components } from 'react-markdown'
 
 interface Topic {
@@ -208,7 +209,10 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
                   prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-700
                   prose-blockquote:border-violet-500 prose-blockquote:text-slate-400
                 ">
-                  <ReactMarkdown components={markdownComponents}>
+                  <ReactMarkdown
+                    components={markdownComponents}
+                    remarkPlugins={[remarkGfm]}
+                  >
                     {lesson.content || '*Контент не добавлен*'}
                   </ReactMarkdown>
                 </div>
