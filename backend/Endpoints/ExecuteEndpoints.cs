@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Backend.Endpoints;
 
+//Компилятор
 public static class ExecuteEndpoints
 {
     public static void MapExecuteEndpoints(this WebApplication app)

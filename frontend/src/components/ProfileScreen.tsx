@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Star, Zap, BookOpen, Loader2, Flame, Camera, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { getUserProfile, getStreakAndAchievements, getAllAchievements, updateAvatar } from '../api'
-import Avatar from './Avatar'
-import StarField from './StarField'
-import PremiumGlow from './PremiumGlow'  // или './PremiumGlow' в зависимости от пути
-import PremiumBadge from './PremiumBadge'
+import Avatar from './layout/Avatar'
+import StarField from '../components/layout/StarField'
+import PremiumGlow from './layout/PremiumGlow' 
+import PremiumBadge from './layout/PremiumBadge'
 
 interface Props {
   onBack: () => void

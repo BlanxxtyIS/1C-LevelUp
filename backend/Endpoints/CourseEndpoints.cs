@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Endpoints;
 
+//Курсы, главы, темы, прогресс
 public static class CourseEndpoints
 {
     public static void MapCourseEndpoints(this WebApplication app)

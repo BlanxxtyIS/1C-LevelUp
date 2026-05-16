@@ -3,9 +3,9 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, BookOpen, ChevronRight, Loader2, CheckCircle } from 'lucide-react'
 import { getCourses, getCourseProgress } from '../../api'
 import { useAuth } from '../../context/AuthContext'
-import StarField from '../StarField'
-import PremiumGlow from '../PremiumGlow' 
-import PremiumBadge from '../PremiumBadge'
+import StarField from '../layout/StarField'
+import PremiumGlow from '../layout/PremiumGlow' 
+import PremiumBadge from '../layout/PremiumBadge'
 
 interface Course {
   id: number

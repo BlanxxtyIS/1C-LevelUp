@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from './context/AuthContext'
 import HomePage from './components/HomePage'
-import LevelMap from './components/LevelMap'
+import LevelMap from './components/game/LevelMap'
 import AdminPanel from './components/admin/AdminPanel'
 import AuthScreen from './components/AuthScreen'
 import ProfileScreen from './components/ProfileScreen'

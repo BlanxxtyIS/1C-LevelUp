@@ -8,7 +8,10 @@ public static class LessonEndpoints
 {
     public static void MapLessonEndpoints(this WebApplication app)
     {
-        // Получить все уроки с прогрессом пользователя
+        // ── 🎮 ИГРОВОЙ РЕЖИМ ──────────────────────────────────────
+        // /lessons/{userId} — список уроков карты
+        // /lessons/{lessonId}/questions — вопросы урока
+        // /progress — сохранить прогресс игрового урока
         app.MapGet("/lessons/{userId}", async (int userId, AppDbContext db) =>
         {
             var lessons = await db.Lessons
@@ -59,39 +62,10 @@ public static class LessonEndpoints
             return Results.Ok(result);
         });
 
-        // Сохранить прогресс
-        app.MapPost("/progress", async (ProgressRequest req, AppDbContext db) =>
-        {
-            var existing = await db.UserProgress
-                .FirstOrDefaultAsync(p => p.UserId == req.UserId && p.LessonId == req.LessonId);
-
-            if (existing != null)
-                return Results.Ok(existing);
-
-            var progress = new UserProgress
-            {
-                UserId = req.UserId,
-                LessonId = req.LessonId,
-                IsCOmpleted = true,
-                XpEarned = req.XpEarned,
-                CompletedAt = DateTime.UtcNow
-            };
-
-            db.UserProgress.Add(progress);
-
-            // Обновляем XP пользователя
-            var user = await db.Users.FindAsync(req.UserId);
-            if (user != null)
-            {
-                user.TotalXp += req.XpEarned;
-                user.Level = (user.TotalXp / 50) + 1;
-            }
-
-            await db.SaveChangesAsync();
-            return Results.Ok(progress);
-        });
-
-        // Получить профиль пользователя
+        // ── 👤 ПРОФИЛЬ ────────────────────────────────────────────
+        // /users/{userId} — профиль
+        // /users/{id}/avatar — аватарка
+        // /users/{userId}/trial — пробный период
         app.MapGet("/users/{userId}", async (int userId, AppDbContext db) =>
         {
             var user = await db.Users.FindAsync(userId);
@@ -127,6 +101,40 @@ public static class LessonEndpoints
             db.Users.Add(user);
             await db.SaveChangesAsync();
             return Results.Ok(user);
+        });
+
+        // ── 📚 КУРСЫ ──────────────────────────────────────────────
+        // /progress/topic-lesson — сохранить прогресс урока курса
+        // /progress/{userId}/completed — пройденные уроки
+        app.MapPost("/progress", async (ProgressRequest req, AppDbContext db) =>
+        {
+            var existing = await db.UserProgress
+                .FirstOrDefaultAsync(p => p.UserId == req.UserId && p.LessonId == req.LessonId);
+
+            if (existing != null)
+                return Results.Ok(existing);
+
+            var progress = new UserProgress
+            {
+                UserId = req.UserId,
+                LessonId = req.LessonId,
+                IsCOmpleted = true,
+                XpEarned = req.XpEarned,
+                CompletedAt = DateTime.UtcNow
+            };
+
+            db.UserProgress.Add(progress);
+
+            // Обновляем XP пользователя
+            var user = await db.Users.FindAsync(req.UserId);
+            if (user != null)
+            {
+                user.TotalXp += req.XpEarned;
+                user.Level = (user.TotalXp / 50) + 1;
+            }
+
+            await db.SaveChangesAsync();
+            return Results.Ok(progress);
         });
 
         // Сохранить прогресс курсового урока
@@ -170,7 +178,8 @@ public static class LessonEndpoints
             return Results.Ok(completed);
         });
 
-        // Таблица лидеров
+        // ── 🏆 ЛИДЕРБОРД ──────────────────────────────────────────
+        // /leaderboard — таблица лидеров
         app.MapGet("/leaderboard", async (AppDbContext db) =>
         {
             var leaders = await db.Users

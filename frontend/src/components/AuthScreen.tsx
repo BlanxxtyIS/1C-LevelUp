@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import { register, login } from '../api'
-import StarField from './StarField'
+import StarField from '../components/layout/StarField'
 
 export default function AuthScreen() {
   const { login: authLogin } = useAuth()
