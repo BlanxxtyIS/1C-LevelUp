@@ -17,7 +17,27 @@ public static class ExecuteEndpoints
             if (req.Code.Length > 5000)
                 return Results.BadRequest(new { error = "Код слишком длинный (макс. 5000 символов)" });
 
-            var forbidden = new[] { "УдалитьФайлы", "НачатьПроцесс", "Команда", "ЗапуститьПриложение" };
+            // Расширенный список запрещённых команд
+            var forbidden = new[]
+            {
+            // Файловая система
+            "УдалитьФайлы", "УдалитьФайл", "СоздатьКаталог", "УдалитьКаталог",
+            "ЗаписатьТекстВФайл", "ЗаписатьДанныеВФайл",
+    
+            // Процессы
+            "НачатьПроцесс", "ЗапуститьПриложение", "Команда",
+    
+            // Сеть
+            "ИнтернетСоединение", "HTTPСоединение", "FTPСоединение",
+            "Новый ИнтернетПочта", "Новый HTTPЗапрос",
+    
+            // COM объекты
+            "Новый COMОбъект", "COMОбъект",
+    
+            // Опасные функции
+            "ВыполнитьОператор", "Выполнить(",
+            };
+            
             foreach (var word in forbidden)
             {
                 if (req.Code.Contains(word, StringComparison.OrdinalIgnoreCase))
@@ -76,7 +96,7 @@ public static class ExecuteEndpoints
                 if (File.Exists(tempFile))
                     File.Delete(tempFile);
             }
-        });
+        }).RequireRateLimiting("execute");;
     }
 }
 

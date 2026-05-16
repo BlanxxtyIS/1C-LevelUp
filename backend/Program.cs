@@ -1,9 +1,11 @@
 using Backend.Data;
 using Backend.Endpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// Rate Limiting
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("auth", opt =>
+    {
+        opt.PermitLimit = 10;
+        opt.Window = TimeSpan.FromMinutes(1);
+    });
+    options.AddFixedWindowLimiter("execute", opt =>
+    {
+        opt.PermitLimit = 20;
+        opt.Window = TimeSpan.FromMinutes(1);
+    });
+    options.RejectionStatusCode = 429;
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -42,7 +60,7 @@ builder.Services.AddCors(options =>
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5184";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
-//Test
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -50,7 +68,6 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 
-    // Проставляем роль Student всем у кого пусто
     var usersWithoutRole = await db.Users
         .Where(u => u.Role == null || u.Role == string.Empty)
         .ToListAsync();
@@ -61,6 +78,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -74,4 +92,3 @@ app.MapStreakEndpoints();
 app.MapExecuteEndpoints();
 
 app.Run();
-

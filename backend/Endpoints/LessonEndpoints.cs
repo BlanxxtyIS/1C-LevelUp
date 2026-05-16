@@ -71,6 +71,13 @@ public static class LessonEndpoints
             var user = await db.Users.FindAsync(userId);
             if (user == null) return Results.NotFound();
 
+            // Проверяем не истёк ли премиум
+            if (user.IsPremium && user.PremiumUntil < DateTime.UtcNow)
+            {
+                user.IsPremium = false;
+                await db.SaveChangesAsync();
+            }
+
             var completedCount = await db.UserProgress
                 .CountAsync(p => p.UserId == userId && p.IsCOmpleted);
 
@@ -219,7 +226,11 @@ public static class LessonEndpoints
             var user = await db.Users.FindAsync(userId);
             if (user == null) return Results.NotFound();
 
-            // Даём триал только если ещё не было премиума
+            // Уже использовал триал
+            if (user.PremiumUntil != null)
+                return Results.BadRequest(new { error = "Пробный период уже был использован" });
+
+            // Активная подписка
             if (user.IsPremium && user.PremiumUntil > DateTime.UtcNow)
                 return Results.BadRequest(new { error = "Подписка уже активна" });
 

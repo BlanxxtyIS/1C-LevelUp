@@ -45,7 +45,8 @@ public static class AuthEndpoint
 
             var token = GenerateToken(user, config);
             return Results.Ok(new { token, user = ToDto(user) });
-        });
+        })
+        .RequireRateLimiting("auth");
 
         // Получить текущего пользователя по токену
         app.MapGet("/auth/me", async (HttpContext http, AppDbContext db) =>
@@ -55,7 +56,11 @@ public static class AuthEndpoint
 
             var user = await db.Users.FindAsync(int.Parse(userIdClaim));
             if (user == null) return Results.Unauthorized();
-
+            if (user.IsPremium && user.PremiumUntil < DateTime.UtcNow)
+            {
+                user.IsPremium = false;
+                await db.SaveChangesAsync();
+            }
             var completedCount = await db.UserProgress
                 .CountAsync(p => p.UserId == user.Id && p.IsCOmpleted);
 
