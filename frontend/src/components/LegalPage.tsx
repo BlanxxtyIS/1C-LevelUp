@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
-import StarField from './StarField'
+import StarField from '../components/layout/StarField'
 
 interface Props {
   onBack: () => void

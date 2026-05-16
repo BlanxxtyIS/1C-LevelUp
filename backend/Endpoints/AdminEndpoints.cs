@@ -5,6 +5,7 @@ using Backend.Helpers;
 
 namespace Backend.Endpoints;
 
+//Админка
 public static class AdminEndpoints
 {
     public static void MapAdminEndpoints(this WebApplication app)

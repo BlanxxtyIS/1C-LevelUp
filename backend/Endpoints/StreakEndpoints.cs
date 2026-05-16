@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Endpoints;
 
+//Стрики, достижения
 public static class StreakEndpoints
 {
     public static void MapStreakEndpoints(this WebApplication app)

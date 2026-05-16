@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Loader2, CheckCircle, XCircle, RotateCcw } from 'lucide-react'
-import { executeCode } from '../api'
+import { executeCode } from '../../api'
 
 interface Props {
   initialCode?: string
