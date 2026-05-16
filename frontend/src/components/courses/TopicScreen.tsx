@@ -9,6 +9,7 @@ import StarField from '../layout/StarField'
 import PremiumGlow from '../layout/PremiumGlow'
 import CodeEditor from '../game/CodeEditor'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 //import { Components } from 'react-markdown'
 
 interface Topic {
@@ -212,6 +213,7 @@ export default function TopicScreen({ topic, course, onBack }: Props) {
                   <ReactMarkdown
                     components={markdownComponents}
                     remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                   >
                     {lesson.content || '*Контент не добавлен*'}
                   </ReactMarkdown>
