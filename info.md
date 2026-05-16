@@ -52,7 +52,8 @@ dotnet run           # http://localhost:5184
 
 ## 📁 Структура проекта
 
-``````1c-levelup/
+```
+1c-levelup/
 ├── frontend/
 │   └── src/
 │       ├── App.tsx                          # Роутинг между страницами (state-based SPA)
