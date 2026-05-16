@@ -5,17 +5,36 @@
 
 ---
 
+## 🗺️ Философия проекта
+
+Контент пишется в стиле **космос + восточная мудрость**:
+
+- Каждая тема начинается с цитаты (Лао-цзы, японские концепции, космические аналогии)
+- Технические концепции объясняются через метафоры (переменные = отсеки корабля, циклы = орбита)
+- Тон живой, без канцелярщины — как будто старший товарищ объясняет за чашкой чая
+- В конце каждой темы — **Космическая аналогия 🌌**
+- Японские концепции: **Кайдзен** (улучшение на 1% каждый день), **Ичиго Ичиэ** (каждый момент уникален)
+
+**Микропромт для написания уроков:**
+> Пиши как старший товарищ который уже набил все шишки. Космические аналогии,
+> японская философия, живые примеры из реальной разработки 1С. Никакой воды.
+> Каждая тема: цитата → суть → примеры кода → космическая аналогия.
+
+---
+
 ## 🛠️ Стек технологий
 
 | Слой | Технология | Зачем |
 |---|---|---|
-| Frontend | React + TypeScript | UI, анимации, взаимодействие |
-| Backend | ASP.NET Core (C#) | API, бизнес-логика |
-| БД | PostgreSQL + EF Core | Хранение данных |
+| Frontend | React + TypeScript + Vite | UI, анимации, взаимодействие |
+| Backend | ASP.NET Core 9 (C#) | API, бизнес-логика |
+| БД | PostgreSQL + EF Core 9 | Хранение данных |
 | Анимации | Framer Motion | Плавные переходы и эффекты |
-| Иконки | Lucide React | Иконки (замок, звезда, и т.д.) |
+| Иконки | Lucide React | Иконки |
 | Стили | Tailwind CSS | Утилитарные CSS классы |
-| Авторизация | JWT (JSON Web Token) | Безопасная аутентификация |
+| Авторизация | JWT | Безопасная аутентификация |
+| Markdown | react-markdown + remark-gfm | Рендеринг контента уроков |
+| Компилятор | OneScript (oscript) | Запуск кода 1С прямо в браузере |
 
 ---
 
@@ -33,35 +52,58 @@ dotnet run           # http://localhost:5184
 
 ## 📁 Структура проекта
 
-```1c-levelup/
+``````1c-levelup/
 ├── frontend/
 │   └── src/
-│       ├── App.tsx                          # Корневой компонент, роутинг между страницами
-│       ├── main.tsx                         # Точка входа, оборачивает App в AuthProvider
-│       ├── index.css                        # Глобальные стили (@import "tailwindcss")
-│       ├── api.ts                           # Все запросы к бэкенду в одном месте
+│       ├── App.tsx                          # Роутинг между страницами (state-based SPA)
+│       ├── api.ts                           # Все fetch-запросы к бэкенду
 │       ├── context/
-│       │   └── AuthContext.tsx              # Глобальное хранилище пользователя (токен, логин, logout)
+│       │   └── AuthContext.tsx              # JWT + user state + refreshUser()
 │       └── components/
-│           ├── LevelMap.tsx                 # Главная страница — карта пути с уроками
-│           ├── LessonScreen.tsx             # Экран урока — вопросы, ответы, жизни, XP
-│           ├── AuthScreen.tsx               # Экран входа и регистрации
-│           ├── ProfileScreen.tsx            # Профиль пользователя — уровень, XP, статистика
+│           ├── game/
+│           │   ├── LevelMap.tsx             # Карта пути — змейка, XP, уроки
+│           │   ├── LessonScreen.tsx         # Экран урока — вопросы, жизни, XP, провал
+│           │   └── CodeEditor.tsx           # Интерактивный компилятор 1С
+│           ├── courses/
+│           │   ├── CoursesPage.tsx          # Список курсов с прогрессом
+│           │   ├── ChaptersPage.tsx         # Главы с прогрессом
+│           │   ├── TopicsPage.tsx           # Темы с прогрессом + блокировка
+│           │   └── TopicScreen.tsx          # Markdown контент + компилятор + XP
+│           ├── home/
+│           │   ├── HomePage.tsx             # Главная — выбор режима + Premium эффекты
+│           │   ├── PremiumModal.tsx         # Модал подписки 250₽/мес + триал 3 дня
+│           │   └── LegalPage.tsx            # Оферта, реквизиты (ИНН 165051909394)
+│           ├── layout/
+│           │   ├── StarField.tsx            # Анимированный звёздный фон (canvas)
+│           │   ├── PremiumGlow.tsx          # Фоновое свечение для Premium
+│           │   ├── PremiumBadge.tsx         # Бейдж PRO ✨
+│           │   ├── Avatar.tsx               # Аватарка (фото или буква)
+│           │   └── AchievementToast.tsx     # Всплывашка при получении достижения
+│           ├── AuthScreen.tsx               # Вход/регистрация + StarField
+│           ├── ProfileScreen.tsx            # Профиль, стрики, достижения (сворачиваемые)
+│           ├── LeaderboardPage.tsx          # Таблица лидеров с топ-3 подиумом
 │           └── admin/
-│               ├── AdminPanel.tsx           # Список уроков с управлением
-│               ├── LessonModal.tsx          # Модалка создания/редактирования урока
-│               └── QuestionModal.tsx        # Модалка создания/редактирования вопроса
+│               ├── AdminPanel.tsx           # Табы: Игровые уроки / Курсы / Пользователи
+│               ├── CourseAdmin.tsx          # Drill-down: курс→глава→тема→урок
+│               └── UsersAdmin.tsx           # Список пользователей, смена ролей
 └── backend/
 ├── Models/
-│   ├── User.cs                          # Модель пользователя (Id, Username, Email, XP, Level)
-│   ├── Lesson.cs                        # Модель урока + Question (вопросы с вариантами)
-│   └── UserProgress.cs                  # Прогресс пользователя по урокам
+│   ├── User.cs                          # Id, Name, Email, TotalXp, Level, Role,
+│   │                                    # AvatarUrl, IsPremium, PremiumUntil
+│   ├── Lesson.cs                        # Урок + Question. TopicId=null → игровой режим
+│   ├── Course.cs                        # Course → Chapter → Topic → Lesson
+│   ├── UserProgress.cs                  # Прогресс по урокам
+│   ├── Streak.cs                        # Стрики (серии дней)
+│   └── Achievement.cs                   # Достижения + UserAchievement
 ├── Data/
-│   └── AppDbContext.cs                  # Контекст EF Core — связь моделей с БД + seed данные
+│   └── AppDbContext.cs                  # EF Core контекст + seed данные
 └── Endpoints/
 ├── AuthEndpoints.cs                 # POST /auth/register, /auth/login, GET /auth/me
-├── LessonEndpoints.cs               # GET /lessons/{userId}, /lessons/{id}/questions, POST /progress
-└── AdminEndpoints.cs                # CRUD для уроков и вопросов (/admin/...)
+├── LessonEndpoints.cs               # 🎮 Игровой режим + 📚 Курсы прогресс + 👤 Профиль
+├── CourseEndpoints.cs               # 📚 Курсы, главы, темы, прогресс
+├── StreakEndpoints.cs               # 🔥 Стрики и достижения
+├── AdminEndpoints.cs                # 🔧 CRUD для уроков, курсов, пользователей
+└── ExecuteEndpoints.cs              # 💻 Компилятор OneScript (запуск кода 1С)
 ```
 ---
 
@@ -74,6 +116,18 @@ dotnet run           # http://localhost:5184
 > Бэкенд проверяет токен и узнаёт кто делает запрос
 > JWT токен содержит внутри ID пользователя и срок действия.
 > Бэкенд может проверить его без обращения к БД — это быстро.
+
+---
+
+## 🗄️ Ключевые модели БД
+User: Id, Name, Email, PasswordHash, Role, TotalXp, Level, AvatarUrl, IsPremium, PremiumUntil
+Lesson: Id, Title, XpReward, Order, TopicId(null=игровой), Content, DurationMinutes
+Course → Chapter → Topic → Lesson (курсовые уроки, TopicId != null)
+UserProgress: UserId, LessonId, IsCOmpleted, XpEarned
+Streak: UserId, CurrentStreak, MaxStreak, LastActivityDate
+Achievement: Id, Key, Title, Emoji | UserAchievement: UserId, AchievementId
+
+**Важно:** `TopicId == null` → урок игрового режима. `TopicId != null` → урок курса.
 
 ---
 
@@ -100,22 +154,52 @@ dotnet run  # миграции применяются автоматически
 
 ## 🌐 API эндпоинты
 
-| Метод  | Путь                          | Что делает                                 |
-|--------|-------------------------------|--------------------------------------------|
-| POST   | /auth/register                | Регистрация нового пользователя            |
-| POST   | /auth/login                   | Вход, возвращает JWT токен                 |
-| GET    | /auth/me                      | Данные текущего пользователя по токену     |
-| GET    | /lessons/{userId}             | Список уроков со статусом для пользователя |
-| GET    | /lessons/{id}/questions       | Вопросы конкретного урока                  |
-| POST   | /progress                     | Сохранить прогресс после урока             |
-| GET    | /users/{userId}               | Профиль пользователя                       |
-| GET    | /admin/lessons                | Все уроки для админки                      |
-| POST   | /admin/lessons                | Создать урок                               |
-| PUT    | /admin/lessons/{id}           | Редактировать урок                         |
-| DELETE | /admin/lessons/{id}           | Удалить урок                               |
-| POST   | /admin/lessons/{id}/questions | Создать вопрос                             |
-| PUT    | /admin/questions/{id}         | Редактировать вопрос                       |
-| DELETE | /admin/questions/{id}         | Удалить вопрос                             |
+### 🎮 Игровой режим
+| Метод | Путь | Что делает |
+|---|---|---|
+| GET | /lessons/{userId} | Уроки карты со статусом (completed/active/locked) |
+| GET | /lessons/{id}/questions | Вопросы урока |
+| POST | /progress | Сохранить прогресс игрового урока |
+| GET | /leaderboard | Топ-20 по XP |
+| POST | /execute | Запустить код 1С через OneScript |
+
+### 📚 Курсы
+| Метод | Путь | Что делает |
+|---|---|---|
+| GET | /courses | Все курсы |
+| GET | /courses/{id}/chapters | Главы курса |
+| GET | /chapters/{id}/topics | Темы главы |
+| GET | /topics/{id}/lessons | Уроки темы |
+| POST | /progress/topic-lesson | Сохранить прогресс урока курса |
+| GET | /chapters/{id}/progress/{userId} | Прогресс по темам главы |
+| GET | /courses/{id}/progress/{userId} | Прогресс по главам курса |
+
+### 👤 Профиль
+| Метод | Путь | Что делает |
+|---|---|---|
+| GET | /users/{userId} | Профиль пользователя |
+| PUT | /users/{id}/avatar | Обновить аватарку (Base64) |
+| POST | /users/{userId}/trial | Активировать триал 3 дня (один раз!) |
+| GET | /streaks/{userId} | Стрики и достижения |
+| POST | /streaks/{userId}/activity | Обновить стрик после урока |
+| GET | /achievements/{userId} | Все достижения с флагом isEarned |
+
+### 🔐 Auth
+| Метод | Путь | Что делает |
+|---|---|---|
+| POST | /auth/register | Регистрация |
+| POST | /auth/login | Вход → JWT токен |
+| GET | /auth/me | Данные по токену |
+
+---
+
+## 💰 Монетизация
+
+- **Бесплатно:** до 100 XP полный доступ
+- **Premium:** 250 ₽/месяц — безлимитный доступ
+- **Триал:** 3 дня бесплатно (один раз на аккаунт)
+- Платёжная система: ЮКасса (в разработке)
+- Самозанятый: Хасанов Марат Ильдарович, ИНН 165051909394
 
 ---
 
@@ -142,6 +226,15 @@ const { user, logout } = useAuth() // в любом компоненте
 ```tsx
 <LessonScreen lessonId={1} onClose={() => {}} onComplete={(xp) => {}} />
 ```
+
+---
+
+## 🚢 Деплой
+
+| Сервис | URL |
+|---|---|
+| Frontend (Vercel) | https://1-c-level-up.vercel.app |
+| Backend (Railway) | https://1c-levelup-production.up.railway.app |
 
 ---
 
